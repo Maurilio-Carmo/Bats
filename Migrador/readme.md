@@ -25,13 +25,13 @@ Antes de executar o script, certifique-se de:
 
 ### 2️⃣ Estrutura dos Logs
 
-#### 4️⃣ Verificação Inicial
+#### ⚡ Verificação Inicial
 
 - O script realiza uma checagem para garantir que:
   - Os arquivos necessários estão no local correto.
   - Há permissões administrativas para execução.
 
-#### 4️⃣ Preparação de Diretórios
+#### ⚡ Preparação de Diretórios
 
 - Cria ou verifica diretórios necessários para a migração ou execução do processo.
 - Logs associados:
@@ -40,18 +40,18 @@ Antes de executar o script, certifique-se de:
   - "Criando diretório exportação: <C:\MIGR\EXP>"
     - Arquivos com INSERT's a serem importados do sistema de destino.
 
-#### 4️⃣ Exportação de Arquivos
+#### ⚡ Exportação de Arquivos
 
 - Exporta em varios arquivos os dados das tabelas que serão migradas.
    - O arquivo tem a devida Organização!
    - Nome do banco e tabela de origem!
 
-#### 4️⃣ Importação do Sistema
+#### ⚡ Importação do Sistema
 
 - Importa cada uma dos arquivos gerados individualmente.
    - Executa cada linha como comando individual!
 
-#### 4️⃣ Validação Final
+#### ⚡ Validação Final
 
 - Ao finalizar o Script, abrira o arquivo de log e o Sistema de destino!
    - Verifique se todos os dados foram Migrados Corretamente!
