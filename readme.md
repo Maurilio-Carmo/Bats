@@ -1,6 +1,10 @@
-#👋 **Bem-vindo ao repositório!**
+#👋 Bem-vindo ao repositório!
+
+---
 
 Este projeto contém várias funcionalidades e ferramentas úteis. Navegue pelas pastas abaixo para conhecer cada uma delas.
+
+---
 
 ## Estrutura do Projeto
 
