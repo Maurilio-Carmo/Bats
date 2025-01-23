@@ -1,8 +1,8 @@
-# 📚 Script para Organizar Arquivos XML com Quebra
+# 📚 Script para Filtrar Arquivos XML com Quebra
 
 ## 📜 Introdução
 
-Este script permite organizar arquivos XML em um diretório específico, utilizando um arquivo de "quebra" para filtrar quais arquivos devem ser copiados. Siga as instruções abaixo para utilizá-lo corretamente.
+Este script permite filtrar arquivos XML em um diretório específico, utilizando um arquivo de "quebra" para filtrar quais arquivos devem ser copiados. Siga as instruções abaixo para utilizá-lo corretamente.
 
 ---
 
