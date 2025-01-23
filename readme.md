@@ -36,6 +36,8 @@ Este projeto contém várias funcionalidades e ferramentas úteis. Navegue pelas
 - **SysPDV Service** 💻  
   Serviço relacionado ao sistema de ponto de venda (PDV).
 
+---
+
 ## Contribuições
 
 🤝 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
