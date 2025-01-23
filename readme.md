@@ -9,7 +9,7 @@ Este projeto contém várias funcionalidades e ferramentas úteis. Navegue pelas
 - **Biometria** 🔒  
   Implementações relacionadas ao uso de biometria em sistemas.
 
-- **BKP Diario - MIDI** 🎵  
+- **BKP Diario - MIDI** 💻  
   Ferramenta para backup diário de arquivos MIDI.
 
 - **Conectar - SGBD** 🗄️  
