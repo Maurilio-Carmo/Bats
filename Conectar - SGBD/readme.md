@@ -1,8 +1,10 @@
-# README.md
+# 📚 Script para Conectar SGBD via Prompt de Comando
 
 ## 📜 Introdução
 
 Este script em batch permite gerenciar conexões com bancos de dados Firebird e SQL Server de maneira simples e intuitiva. Com um menu interativo, você pode escolher qual gerenciador de banco de dados usar e qual banco específico deseja acessar.
+
+---
 
 ## ⚙️ Pré-requisitos
 
@@ -13,6 +15,8 @@ Antes de usar o script, verifique se você possui:
 - Acesso aos bancos de dados mencionados no script.
 - Permissões adequadas para executar comandos e acessar os arquivos mencionados.
 
+---
+
 ## 🛠️ Estrutura do Script
 
 O script realiza as seguintes funções:
@@ -21,6 +25,8 @@ O script realiza as seguintes funções:
 2. **Exibe um menu inicial** para que o usuário escolha entre Firebird ou SQL Server.
 3. **Permite a seleção do banco de dados** específico dentro do Firebird.
 4. **Executa comandos SQL** utilizando `ISQL` para Firebird ou `SQLCMD` para SQL Server.
+
+---
 
 ## 🚀 Como Usar
 
@@ -46,10 +52,14 @@ O script realiza as seguintes funções:
 
 5. **Acompanhe as Mensagens:** O script executará os comandos SQL e exibirá as saídas diretamente no console.
 
+---
+
 ## ⚠️ Atenção
 
 - **Credenciais:** Certifique-se de que as credenciais (`ISC_USER` e `ISC_PASSWORD`) estão corretas para acessar os bancos de dados.
 - **Permissões:** Execute o script com permissões administrativas se necessário, especialmente ao acessar serviços do sistema.
+
+---
 
 ## 📝 Exemplo de Uso
 
@@ -62,6 +72,8 @@ Digite a opcao:
 ```
 
 Após escolher o gerenciador, você poderá selecionar o banco de dados desejado.
+
+---
 
 ## 🎉 Conclusão
 

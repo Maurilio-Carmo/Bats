@@ -1,8 +1,10 @@
-# README.md
+# 📚 Script para Desativar e Ativar a Biometria
 
 ## 📜 Introdução
 
 Este script em batch é projetado para gerenciar a biometria em um sistema que utiliza bancos de dados Firebird. Ele permite que você desative ou restaure a biometria de forma simples e eficaz.
+
+---
 
 ## ⚙️ Pré-requisitos
 
@@ -12,6 +14,8 @@ Antes de usar o script, certifique-se de que você possui:
 - Acesso ao banco de dados **SYSPDV_CAD.FDB** e **SYSPDV_MOV.FDB**.
 - Permissões adequadas para executar comandos e acessar os arquivos mencionados.
 
+---
+
 ## 🛠️ Estrutura do Script
 
 O script realiza as seguintes funções:
@@ -20,6 +24,8 @@ O script realiza as seguintes funções:
 2. **Exibe um menu para o usuário escolher entre desativar ou restaurar a biometria.**
 3. **Executa comandos SQL para modificar as configurações da biometria no banco de dados.**
 4. **Registra as operações em um arquivo de log.**
+
+---
 
 ## 🚀 Como Usar
 
@@ -38,10 +44,14 @@ O script realiza as seguintes funções:
 
 4. **Siga as instruções na tela:** O script fornecerá feedback sobre cada ação realizada, incluindo mensagens de sucesso ou erro.
 
+---
+
 ## ⚠️ Atenção
 
 - **Backup:** Sempre faça backup dos seus bancos de dados antes de executar operações que alterem dados.
 - **Permissões:** Execute o script com permissões administrativas se necessário, especialmente ao acessar arquivos ou processos do sistema.
+
+---
 
 ## 📝 Exemplo de Uso
 
@@ -55,10 +65,14 @@ Digite a opcao:
 
 Após selecionar uma opção, o script executará as ações correspondentes e exibirá mensagens apropriadas.
 
+---
+
 ## 📂 Logs
 
 Os logs das operações realizadas são salvos em `C:\SYSPDV\TEMP\Log_Biometria.txt`. 
 Você pode revisar este arquivo para verificar as ações executadas e quaisquer erros que possam ter ocorrido.
+
+---
 
 ## 🎉 Conclusão
 
