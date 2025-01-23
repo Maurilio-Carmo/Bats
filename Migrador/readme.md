@@ -70,7 +70,7 @@ Aqui estão algumas soluções para problemas comuns:
 
 3. **Reexecute o script**:
   - Após orrigir a linha!
-    - Executar somente a linha em um gerenciador como **IBO Console** ou **IBExpert**! 
+    - Executar somente a linha em um gerenciador como 🌐**IBO Console** ou ⚛️**IBExpert**! 
 
 ---
 
