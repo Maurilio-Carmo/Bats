@@ -147,9 +147,7 @@ ECHO    OPERACAO CONCLUIDA COM SUCESSO...
 ECHO.
 ECHO   ===================================
 ECHO.
-
 PAUSE
 
 :END
-
 EXIT
