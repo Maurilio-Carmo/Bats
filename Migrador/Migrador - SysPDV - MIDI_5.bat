@@ -172,6 +172,65 @@ IF "%SYSTEM%"=="0" GOTO END
 	ECHO.
 ) > "%MIGR_ARQ%"
 
+:SYS_EMPRESA
+
+ECHO.
+ECHO   ==================================
+ECHO.
+ECHO       Deseja Migrar PROPRIO!
+ECHO.
+ECHO              1 - Sim
+ECHO.
+ECHO              0 - Nao
+ECHO.
+ECHO   ==================================
+ECHO.
+SET /P SYS_EMPRESA=" Digite a opcao: "
+CLS
+
+	:: Validação de entrada
+IF "%SYS_EMPRESA%" NEQ "1" IF "%SYS_EMPRESA%" NEQ "0" (
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO             Opcao invalida!
+	ECHO       Por favor, escolha 1 ou 0!
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	PAUSE
+	CLS
+	GOTO SYS_EMPRESA
+)
+
+IF "%SYS_EMPRESA%"=="1" (
+	ECHO OUTPUT "%EXP_PATH%\SYS_EMPRESA.SQL";
+	ECHO SELECT
+	ECHO 	'UPDATE EMPRESA SET ' ^|^|
+	ECHO 	'CIDADE = ''' ^|^| PRPMUN ^|^| ''', ' ^|^|
+	ECHO 	'COMPLEMENTO = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'NUMERO = ' ^|^| TRIM^(PRPNUM^) ^|^| ', ' ^|^|
+	ECHO 	'STATE = ''' ^|^| PRPUF ^|^| ''', ' ^|^|
+	ECHO 	'LOGRADOURO = ''' ^|^| PRPEND ^|^| ''', ' ^|^|
+	ECHO 	'LOGRADOURO_TIPO = ''' ^|^| 'R' ^|^| ''', ' ^|^|
+	ECHO 	'CEP = ''' ^|^| PRPCEP ^|^| ''', ' ^|^|
+	ECHO 	'BAIRRO = ''' ^|^| PRPBAI ^|^| ''', ' ^|^|
+	ECHO 	'RAZAOSOCIAL = ''' ^|^| PRPDES ^|^| ''', ' ^|^|
+	ECHO 	'DOCUMENTO = ''' ^|^| PRPCGC ^|^| ''', ' ^|^|
+	ECHO 	'NOMEFANTASIA = ''' ^|^| COALESCE^(PRPFAN, PRPDES^) ^|^| ''', ' ^|^|
+	ECHO 	'TIPOPESSOA = ' ^|^| IIF^(PRPPFPJ = 'F', '1', '2'^) ^|^| ', ' ^|^|
+	ECHO 	'TELEFONE = ''' ^|^| PRPTEL ^|^| ''', ' ^|^|
+	ECHO 	'TELEFONE2 = ''' ^|^| PRPFAX ^|^| ''', ' ^|^|
+	ECHO 	'LICENCA = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'VERSAO = ' ^|^| 'NULL' ^|^| ', ' ^|^|
+	ECHO 	'ULTIMA_ABERTURA = ''' ^|^| CURRENT_DATE ^|^| ''' ' ^|^|
+	ECHO 	'WHERE ^(CODIGO = ''' ^|^| '0001' ^|^| '''^);' ^|^| ' COMMIT;'
+	ECHO FROM PROPRIO;
+	ECHO.
+	) >> "%MIGR_ARQ%"
+
+IF "%SYS_EMPRESA%"=="0" GOTO SYS_FUNCIONARIO
+
 :SYS_FUNCIONARIO
 
 ECHO.
@@ -854,6 +913,28 @@ CLS
 	TIMEOUT /T 2
 	CLS
 	
+IF EXIST "%EXP_PATH%\SYS_EMPRESA.SQL" (
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO              [EMPRESA]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	(
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO              [EMPRESA]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	)  >> "%LOG_PATH%"
+	ECHO INPUT '%EXP_PATH%\SYS_EMPRESA.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%DB_MIDIPDV%" >> "%LOG_PATH%" 2>&1
+	TIMEOUT /T 2
+	CLS
+	)
+
 IF EXIST "%EXP_PATH%\SYS_FUNCIONARIO.SQL" (
 	ECHO.
 	ECHO   ==================================
