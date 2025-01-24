@@ -18,9 +18,7 @@ Este script em Batch permite verificar, adicionar e testar rotas de rede no seu 
 ### ⚙️ Instruções de Uso
 
 1. **Executar o Script**: 
-   - Abra o terminal do Windows (cmd).
-   - Navegue até o diretório onde o script está salvo.
-   - Execute o script digitando `script.bat` (substitua `script.bat` pelo nome do seu arquivo).
+   - Execute o script em modo Administrador.
 
 2. **Verificação da Rota**:
    - O script começará verificando se a rota `172.19.0.0` já existe.
