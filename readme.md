@@ -20,8 +20,10 @@ Este projeto contém várias funcionalidades e ferramentas úteis. Navegue pelas
 
   - [**Filtro de Cupons** 🔍](Cupons/Filtro%20de%20Cupons/)
     Filtrar cupons disponíveis.
+
   - [**Organizar XML's** 📂](Cupons/Organizar%20XML's/)
     Organizar arquivos XML relacionados a cupons.
+
   - [**Renomear XML's** ✏️](Cupons/Renomear%20XML's/)
     Renomear arquivos XML conforme necessário.
 
