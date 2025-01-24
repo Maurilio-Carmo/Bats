@@ -26,9 +26,7 @@ Antes de executar o script, certifique-se de que você possui:
 ## 🔧 Instruções de Uso
 
 1. **Executar o Script**:
-   - Abra o terminal ou prompt de comando.
-   - Navegue até o diretório onde o script está localizado.
-   - Execute o script.
+   - Execute o script em modo Administrador.
 
 2. **Digite o Caminho da Pasta**:
    - Quando solicitado, insira o caminho da pasta que contém os arquivos XML que você deseja renomear.
