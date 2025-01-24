@@ -51,7 +51,7 @@ O script realiza as seguintes funções:
    - Após inicializar pode realizar consultas com base em linguagem SQL de acordo com SGBD
 
 5. **Sair do prompt de Consulta**
-   - Para sair com commit digitar 'EXIT;'
+   - Para sair com commit digitar ***'EXIT;'***
 
 ---
 
