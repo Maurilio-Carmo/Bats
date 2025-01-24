@@ -38,7 +38,7 @@ O script realiza as seguintes funções:
    - Execute o script pela primeira vez em modo Administrador.
    - O script solicitará que você configure o caminho onde deseja salvar os backups.
 
-3. **Executar o Script**
+3. **Executar o Script:**
    - Após a primeira inicialização, fica gravado o destino de Backup, realizando sempre que executado.
 
 4. **Acompanhe as Mensagens:**
