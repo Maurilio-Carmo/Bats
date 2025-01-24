@@ -32,7 +32,7 @@ O script realiza as seguintes funções:
 ## 🚀 Como Usar
 
 1. **Baixe o script:** 
-   - Transfira o script para o 'shell:startup' para ser executado logo após a inicialização.
+   - Transfira o script para o **shell:startup** para ser executado logo após a inicialização.
 
 2. **Configurar Variáveis:**
    - Execute o script pela primeira vez em modo Administrador.
