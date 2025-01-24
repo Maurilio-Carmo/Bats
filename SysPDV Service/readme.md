@@ -18,9 +18,7 @@ Este script em Batch é projetado para facilitar a reinstalação do serviço **
 ### ⚙️ Instruções de Uso
 
 1. **Executar o Script**:
-   - Abra o terminal do Windows (cmd).
-   - Navegue até o diretório onde o script está salvo.
-   - Execute o script digitando `script.bat` (substitua `script.bat` pelo nome do seu arquivo).
+   - Execute o script em modo Administrador.
 
 2. **Processo de Reinstalação**:
    - O script começará com uma mensagem de boas-vindas e uma pausa para que você possa ler.
