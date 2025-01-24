@@ -13,17 +13,17 @@ Funcionalidades principais:
 
 ## 🚀 Instruções de Uso
 
-### 1️⃣ Pré-requisitos
+### ⚙️ Pré-requisitos
 
 Antes de executar o script, certifique-se de:
 
-- ✅ Ter o sistema operacional **Windows** instalado no computador.
-- ✅ Possuir permissões de administrador para evitar erros de execução.
-- ✅ No dico C: ter os diretorios do Syspdv e Midi com seus respectivos bancos.
+- Ter o sistema operacional **Windows** instalado no computador.
+- Possuir permissões de administrador para evitar erros de execução.
+- No dico C: ter os diretorios do Syspdv e Midi com seus respectivos bancos.
 
 ⚠️ **Atenção:** Faça backup do arquivo original antes de realizar qualquer modificação.
 
-### 2️⃣ Estrutura dos Logs
+### 📝 Estrutura dos Logs
 
 #### ⚡ Verificação Inicial
 
