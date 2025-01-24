@@ -29,14 +29,14 @@ O script realiza as seguintes funções:
 
 ## 🚀 Como Usar
 
-1. **Baixe o script:** Copie o código do script para um arquivo com a extensão `.bat`, por exemplo, `gerenciar_biometria.bat`.
+1. **Baixe o script:**
+   - Baixe e Transfira para o Caixa.
 
 2. **Configurar Variáveis:**
-   - Abra o arquivo `.bat` em um editor de texto.
-   - Verifique se os caminhos das variáveis `SYSPDV_CAD_PATH`, `SYSPDV_MOV_PATH`, e `TEMP_PATH` estão corretos e ajustados ao seu ambiente.
+   - Verifique se os arquivos de banco de dados 'syspdv_cad.fdb' e 'syspdv_mov.fdb' estão presente no diretório do syspdv.
 
 3. **Executar o Script:**
-   - Clique duas vezes no arquivo `.bat` ou execute-o através do prompt de comando.
+   - Execute o script em modo Administrador.
    - O menu aparecerá, permitindo que você escolha uma opção:
      - `1` - Desativar a biometria
      - `2` - Restaurar a biometria
