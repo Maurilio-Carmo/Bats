@@ -58,7 +58,7 @@ O script realiza as seguintes funções:
 ## ⚠️ Atenção
 
 - **Credenciais:** Certifique-se de que as credenciais (`ISC_USER` e `ISC_PASSWORD`) estão corretas para acessar os bancos de dados.
-- **Permissões:** Execute o script com permissões administrativas se necessário, especialmente ao acessar serviços do sistema.
+- **Permissões:** Execute o script com permissões administrativas, especialmente ao acessar serviços do sistema.
 
 ---
 
