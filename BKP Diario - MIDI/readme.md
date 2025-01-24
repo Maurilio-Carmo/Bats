@@ -31,17 +31,18 @@ O script realiza as seguintes funções:
 
 ## 🚀 Como Usar
 
-1. **Baixe o script:** Copie o código do script para um arquivo com a extensão `.bat`, por exemplo, `backup_midi.bat`.
+1. **Baixe o script:** 
+   - Transfira o script para o 'shell:startup' para ser executado logo após a inicialização.
 
 2. **Configurar Variáveis:**
-   - Abra o arquivo `.bat` em um editor de texto.
-   - Verifique se os caminhos das variáveis `DB_PATH` e `TEMP_PATH` estão corretos e ajustados ao seu ambiente.
+   - Execute o script pela primeira vez em modo Administrador.
+   - O script solicitará que você configure o caminho onde deseja salvar os backups.
 
-3. **Executar o Script:**
-   - Clique duas vezes no arquivo `.bat` ou execute-o através do prompt de comando.
-   - O script solicitará que você configure o caminho onde deseja salvar os backups, caso ainda não esteja configurado.
+3. **Executar o Script**
+   - Após a primeira inicialização, fica gravado o destino de Backup, realizando sempre que executado.
 
-4. **Acompanhe as Mensagens:** O script exibirá mensagens informativas sobre cada etapa do processo de backup.
+4. **Acompanhe as Mensagens:**
+   - O script exibirá mensagens informativas sobre cada etapa do processo de backup.
 
 ---
 
