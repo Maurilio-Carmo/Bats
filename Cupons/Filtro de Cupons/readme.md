@@ -29,9 +29,7 @@ Antes de executar o script, certifique-se de que você possui:
 ## 🔧 Instruções de Uso
 
 1. **Executar o Script**:
-   - Abra o terminal ou prompt de comando.
-   - Navegue até o diretório onde o script está localizado.
-   - Execute o script.
+   - Execute o script em modo Administrador.
 
 2. **Criar ou Verificar o Diretório XML**:
    - Quando solicitado, escolha se deseja criar o diretório `C:\XML` ou se ele já existe.
