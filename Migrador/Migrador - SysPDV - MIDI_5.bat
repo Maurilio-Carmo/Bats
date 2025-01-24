@@ -177,7 +177,7 @@ IF "%SYSTEM%"=="0" GOTO END
 ECHO.
 ECHO   ==================================
 ECHO.
-ECHO       Deseja Migrar PROPRIO!
+ECHO        Deseja Migrar EMPRESA!
 ECHO.
 ECHO              1 - Sim
 ECHO.
@@ -1310,6 +1310,45 @@ IF "%MIDI_REGIME%"=="3" (
 	SET "TRIBUTADO='102'"
 	)
 
+:MIDI_PROPRIO
+
+ECHO.
+ECHO   ==================================
+ECHO.
+ECHO        Deseja Migrar PROPRIO!
+ECHO.
+ECHO              1 - Sim
+ECHO.
+ECHO              0 - Nao
+ECHO.
+ECHO   ==================================
+ECHO.
+SET /P MIDI_PROPRIO=" Digite a opcao: "
+CLS
+
+	:: Validação de entrada
+IF "%MIDI_PROPRIO%" NEQ "1" IF "%MIDI_PROPRIO%" NEQ "0" (
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO             Opcao invalida!
+	ECHO       Por favor, escolha 1 ou 0!
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	PAUSE
+	CLS
+	GOTO MIDI_PROPRIO
+)
+
+IF "%MIDI_PROPRIO%"=="1" (
+	ECHO OUTPUT "%EXP_PATH%\MIDI_PROPRIO.SQL";
+	***
+	ECHO.
+	) >> "%MIGR_ARQ%"
+
+IF "%MIDI_PROPRIO%"=="0" GOTO MIDI_FUNCIONARIO
+
 :MIDI_FUNCIONARIO
 
 ECHO.
@@ -2295,6 +2334,28 @@ CLS
 	TIMEOUT /T 2
 	CLS
 	
+IF EXIST "%EXP_PATH%\MIDI_PROPRIO.SQL" (
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO              [PROPRIO]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	(
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO              [PROPRIO]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	)  >> "%LOG_PATH%"
+	ECHO INPUT '%EXP_PATH%\MIDI_PROPRIO.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%DB_MIDIPDV%" >> "%LOG_PATH%" 2>&1
+	TIMEOUT /T 2
+	CLS
+	)
+
 IF EXIST "%EXP_PATH%\MIDI_FUNCIONARIO.SQL" (
 	ECHO.
 	ECHO   ==================================
