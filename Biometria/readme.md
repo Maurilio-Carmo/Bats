@@ -42,14 +42,15 @@ O script realiza as seguintes funções:
      - `2` - Restaurar a biometria
      - `0` - Sair do programa
 
-4. **Siga as instruções na tela:** O script fornecerá feedback sobre cada ação realizada, incluindo mensagens de sucesso ou erro.
+4. **Siga as instruções na tela:**
+   - O script fornecerá feedback sobre cada ação realizada, incluindo mensagens de sucesso ou erro.
 
 ---
 
 ## ⚠️ Atenção
 
 - **Backup:** Sempre faça backup dos seus bancos de dados antes de executar operações que alterem dados.
-- **Permissões:** Execute o script com permissões administrativas se necessário, especialmente ao acessar arquivos ou processos do sistema.
+- **Permissões:** Execute o script com permissões administrativas, especialmente ao acessar arquivos ou processos do sistema.
 
 ---
 
