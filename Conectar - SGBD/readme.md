@@ -30,27 +30,28 @@ O script realiza as seguintes funções:
 
 ## 🚀 Como Usar
 
-1. **Baixe o script:** Copie o código do script para um arquivo com a extensão `.bat`, por exemplo, `gerenciar_banco.bat`.
+1. **Execute o script:**
+   - Execute o script em modo Administrador.
 
-2. **Configurar Variáveis:**
-   - Abra o arquivo `.bat` em um editor de texto.
-   - Verifique se os caminhos das variáveis `DB_PATH_SYSPDV`, `DB_PATH_MIDI_4`, e `DB_PATH_MIDI_5` estão corretos e ajustados ao seu ambiente.
-
-3. **Executar o Script:**
-   - Clique duas vezes no arquivo `.bat` ou execute-o através do prompt de comando.
+2. **Escolha o SGBD:**
    - O menu aparecerá, permitindo que você escolha:
      - `1` - Firebird 2.5
      - `2` - SQL Server
      - `0` - Sair
 
-4. **Escolher Banco de Dados (para Firebird):**
+3. **Escolher Banco de Dados (para Firebird):**
    - Se você escolher Firebird, será solicitado a selecionar um banco de dados específico:
      - `1` - SysPDV
      - `2` - Midi 4
      - `3` - Midi 5
      - `0` - Voltar ao menu anterior
 
-5. **Acompanhe as Mensagens:** O script executará os comandos SQL e exibirá as saídas diretamente no console.
+4. **Acompanhe as Mensagens:**
+   - O script executará os comandos SQL e exibirá as saídas diretamente no console.
+   - Após inicializar pode realizar consultas com base em linguagem SQL de acordo com SGBD
+
+5. **Sair do prompt de Consulta**
+   - Para sair com commit digitar 'EXIT;'
 
 ---
 
