@@ -1284,6 +1284,9 @@ IF "%MIDI_REGIME%" NEQ "1" IF "%MIDI_REGIME%" NEQ "2" IF "%MIDI_REGIME%" NEQ "3"
 )
 
 IF "%MIDI_REGIME%"=="1" (
+	SET "PRPREGFED=R"
+	SET "PRPREGEST=N"
+	SET "PRPCRT=3"
 	SET "FONTE=NULL"
 	SET "ISENTO=NULL"
 	SET "NAO_TRIBUTADO=NULL"
@@ -1294,6 +1297,9 @@ IF "%MIDI_REGIME%"=="1" (
 	)
 	
 IF "%MIDI_REGIME%"=="2" (
+	SET "PRPREGFED=P"
+	SET "PRPREGEST=N"
+	SET "PRPCRT=3"
 	SET "FONTE=NULL"
 	SET "ISENTO=NULL"
 	SET "NAO_TRIBUTADO=NULL"
@@ -1304,6 +1310,9 @@ IF "%MIDI_REGIME%"=="2" (
 	)
 	
 IF "%MIDI_REGIME%"=="3" (
+	SET "PRPREGFED=S"
+	SET "PRPREGEST=S"
+	SET "PRPCRT=1"
 	SET "FONTE='500'"
 	SET "ISENTO='300'"
 	SET "NAO_TRIBUTADO='400'"
@@ -1343,7 +1352,69 @@ IF "%MIDI_PROPRIO%" NEQ "1" IF "%MIDI_PROPRIO%" NEQ "0" (
 
 IF "%MIDI_PROPRIO%"=="1" (
 	ECHO OUTPUT "%EXP_PATH%\MIDI_PROPRIO.SQL";
-	***
+	ECHO SELECT 
+	ECHO 	'UPDATE PROPRIO SET ' ^|^| 
+	ECHO 	'PRPDES = ''' ^|^| RAZAOSOCIAL ^|^| ''', ' ^|^|
+	ECHO 	'PRPFAN = ''' ^|^| NOMEFANTASIA ^|^| ''', ' ^|^|
+	ECHO 	'PRPCAB1 = ''' ^|^| NOMEFANTASIA ^|^| ''', ' ^|^|
+	ECHO 	'PRPCAB2 = ''' ^|^| RAZAOSOCIAL ^|^| ''', ' ^|^|
+	ECHO 	'PRPCAB3 = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPMSG1 = ''' ^|^| 'OBRIGADO VOLTE SEMPRE !!!' ^|^| ''', ' ^|^|
+	ECHO 	'PRPMSG2 = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPMSG3 = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPMSG4 = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPCGC = ''' ^|^| DOCUMENTO ^|^| ''', ' ^|^|
+	ECHO 	'PRPIERG = ''' ^|^| 'ISENTO' ^|^| ''', ' ^|^|
+	ECHO 	'PRPEND = ''' ^|^| ^(LOGRADOURO_TIPO ^|^| ' ' ^|^| LOGRADOURO^) ^|^| ''', ' ^|^|
+	ECHO 	'PRPBAI = ''' ^|^| BAIRRO ^|^| ''', ' ^|^|
+	ECHO 	'PRPMUN = ''' ^|^| CIDADE ^|^| ''', ' ^|^|
+	ECHO 	'PRPUF = ''' ^|^| STATE ^|^| ''', ' ^|^|
+	ECHO 	'PRPTEL = ''' ^|^| TELEFONE ^|^| ''', ' ^|^|
+	ECHO 	'PRPFAX = ''' ^|^| TELEFONE2 ^|^| ''', ' ^|^|
+	ECHO 	'PRPCEP = ''' ^|^| CEP ^|^| ''', ' ^|^|
+	ECHO 	'PRPNUM = ''' ^|^| NUMERO ^|^| ''', ' ^|^|
+	ECHO 	'PRPCMP = ''' ^|^| COMPLEMENTO ^|^| ''', ' ^|^|
+	ECHO 	'PRPRESP = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPEMAIL = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'REVDES = ''' ^|^| 'WM SOLUÇÕES' ^|^| ''', ' ^|^|
+	ECHO 	'REVTEL = ''' ^|^| '8530224700' ^|^| ''', ' ^|^|
+	ECHO 	'PRPPLCMULJURREC = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPPLCMULJURPAG = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPPLCDCNREC = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPPLCDCNPAG = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPSIMDES1 = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPSIMDES2 = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPINCMUN = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPREGFED = ''' ^|^| '%PRPREGFED%' ^|^| ''', ' ^|^|
+	ECHO 	'PRPREGEST = ''' ^|^| '%PRPREGEST%' ^|^| ''', ' ^|^|
+	ECHO 	'PRPPAGREST = ' ^|^| 0 ^|^| ', ' ^|^|
+	ECHO 	'PRPPAGRFED = ' ^|^| 0 ^|^| ', ' ^|^|
+	ECHO 	'PRPDATNFE = ''' ^|^| '1-JAN-2025 00:00:00' ^|^| ''', ' ^|^|
+	ECHO 	'PRPALIQINTERNA = ' ^|^| 0 ^|^| ', ' ^|^|
+	ECHO 	'PRPNUMZFRANCA = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPREGESPTRB = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'NFSNATOPSER = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPCRT = ''' ^|^| '%PRPCRT%' ^|^| ''', ' ^|^|
+	ECHO 	'PRPCSTALIQEFET = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRP_PORTA_SMTP = ' ^|^| 0 ^|^| ', ' ^|^|
+	ECHO 	'PRP_SERVIDOR_SMTP = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRP_LOGIN_EMAIL = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPCODIBGE = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPNFCECFOP = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPFUSHOR = ''' ^|^| '-03:00' ^|^| ''', ' ^|^|
+	ECHO 	'PRPCNAE = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPPLCQBR = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPPLCSBR = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPCODMUNSIAF = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'PRPCHVVFPE = ''' ^|^| '25CFE38D-3B92-46C0-91CA-CFF751A82D3D' ^|^| ''', ' ^|^|
+	ECHO 	'PRPSINCLD = ''' ^|^| 'A' ^|^| ''', ' ^|^|
+	ECHO 	'PRPVERQRCODENFCE = ''' ^|^| '2.00' ^|^| ''', ' ^|^|
+	ECHO 	'LOJ_CODIGO = ''' ^|^| '1' ^|^| ''', ' ^|^|
+	ECHO 	'PRPPFPJ = ''' ^|^| IIF^(TIPOPESSOA = '1', 'F', 'J'^) ^|^| ''', ' ^|^|
+	ECHO 	'PRPCODMAITAM = ''' ^|^| 'N' ^|^| ''', ' ^|^|
+	ECHO 	'PRPCNPJINSTPAG = ''' ^|^| '' ^|^| ''' ' ^|^|
+	ECHO 	'WHERE PRPCOD = ''' ^|^| '0001' ^|^| ''';' ^|^| ' COMMIT;'
+	ECHO FROM EMPRESA;
 	ECHO.
 	) >> "%MIGR_ARQ%"
 
@@ -2027,9 +2098,11 @@ IF "%MIDI_CONTARECEBER%"=="0" (ECHO.)
 	:: Outras Informações
 :COD_IBGE
 
-IF "%MIDI_FORNECEDOR%"=="1" (SET "IBGE=1")
+IF "%MIDI_PROPRIO%"=="1" (SET "IBGE=1")
 
 IF "%MIDI_CLIENTE%"=="1" (SET "IBGE=1")
+
+IF "%MIDI_FORNECEDOR%"=="1" (SET "IBGE=1")
 
 IF "%IBGE%"=="1" (
 	ECHO CREATE TABLE MIGR_ESTADOS ^(
@@ -2069,6 +2142,18 @@ IF "%IBGE%"=="1" (
 	ECHO.
 	) >> "%EXP_PATH%\OUTRAS_INFORMACOES.SQL"
 
+IF "%MIDI_PROPRIO%"=="1" (
+	ECHO UPDATE PROPRIO P
+	ECHO SET PRPCODIBGE = ^(
+	ECHO 	SELECT E.CODUF ^|^| M.CODIBGE
+	ECHO 	FROM FISCO_CODIGOIBGE M
+	ECHO 		JOIN MIGR_ESTADOS E ON E.SIGLA = M.CODIBGEUF
+	ECHO 		WHERE P.PRPUF = M.CODIBGEUF
+	ECHO 		AND P.PRPMUN = M.CODIBGECID^);
+	ECHO COMMIT;
+	ECHO.
+	) >> "%EXP_PATH%\OUTRAS_INFORMACOES.SQL"
+
 IF "%MIDI_FORNECEDOR%"=="1" (
 	ECHO UPDATE FORNECEDOR F
 	ECHO SET FORCODIBGE = ^(
@@ -2092,7 +2177,7 @@ IF "%MIDI_CLIENTE%"=="1" (
 	ECHO COMMIT;
 	ECHO.
 	) >> "%EXP_PATH%\OUTRAS_INFORMACOES.SQL"
-	
+
 IF "%IBGE%"=="1" (
 	ECHO DROP TABLE MIGR_ESTADOS;
 	ECHO COMMIT;
@@ -2351,7 +2436,7 @@ IF EXIST "%EXP_PATH%\MIDI_PROPRIO.SQL" (
 	ECHO   ==================================
 	ECHO.
 	)  >> "%LOG_PATH%"
-	ECHO INPUT '%EXP_PATH%\MIDI_PROPRIO.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%DB_MIDIPDV%" >> "%LOG_PATH%" 2>&1
+	ECHO INPUT '%EXP_PATH%\MIDI_PROPRIO.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%DB_SYSPDV%" >> "%LOG_PATH%" 2>&1
 	TIMEOUT /T 2
 	CLS
 	)
