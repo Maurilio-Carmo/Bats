@@ -2,7 +2,8 @@
 
 ## 📜 Introdução
 
-Este script BAT foi criado para realizar **migrações e automações** no sistema SysPDV, utilizando comandos do Windows. Ele é útil para automatizar processos, economizar tempo e minimizar erros humanos.
+Este script BAT foi criado para realizar **migrações e automações** no sistema SysPDV e Midi 5, utilizando comandos do Windows. 
+Ele é útil para automatizar processos, economizar tempo e minimizar erros humanos.
 
 Funcionalidades principais:
 - 🔄 Migração de dados de forma rápida e eficiente.
