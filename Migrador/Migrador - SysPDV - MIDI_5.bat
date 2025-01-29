@@ -1374,7 +1374,7 @@ IF "%MIDI_PROPRIO%"=="1" (
 	ECHO 	'PRPCEP = ''' ^|^| CEP ^|^| ''', ' ^|^|
 	ECHO 	'PRPNUM = ''' ^|^| NUMERO ^|^| ''', ' ^|^|
 	ECHO 	'PRPCMP = ''' ^|^| COMPLEMENTO ^|^| ''', ' ^|^|
-	ECHO 	'REVDES = ''' ^|^| 'WM SOLUÇÕES' ^|^| ''', ' ^|^|
+	ECHO 	'REVDES = ''' ^|^| 'WM SOLUCOES' ^|^| ''', ' ^|^|
 	ECHO 	'REVTEL = ''' ^|^| '8530224700' ^|^| ''', ' ^|^|
 	ECHO 	'PRPREGFED = ''' ^|^| '%PRPREGFED%' ^|^| ''', ' ^|^|
 	ECHO 	'PRPREGEST = ''' ^|^| '%PRPREGEST%' ^|^| ''', ' ^|^|
