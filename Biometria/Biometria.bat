@@ -176,7 +176,7 @@ ECHO        Desativando Biometria...
 ECHO.
 ECHO   ==================================
 ECHO.
-TASKKILL /F /IM SYSPDV_PDV.EXE > NUL
+TASKKILL /F /IM SYS* > NUL
 TIMEOUT /T 2
 CLS
 
@@ -260,7 +260,7 @@ ECHO        Restaurando Biometria...
 ECHO.
 ECHO   ==================================
 ECHO.
-TASKKILL /F /IM SYSPDV_PDV.EXE > NUL
+TASKKILL /F /IM SYS* > NUL
 TIMEOUT /T 2
 CLS
 
