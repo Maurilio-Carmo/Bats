@@ -95,7 +95,7 @@ IF "%CHOOSE%"=="0" GOTO END
 	) > "%MIGR_ARQ%"
 
 	(
-	ECHO OUTPUT "%TEMP_PATH%\CONFIG_NFCE.SQL ";
+	ECHO OUTPUT "%TEMP_PATH%\CONFIG_SRV.SQL";
 	ECHO SELECT 
 	ECHO 	'INSERT INTO SERIE_NOTA_FISCAL ^(SERTIP, SERDATCAD, SERNUMINI, SERNUMFIN, SERNUMATU, SERPERALT, SERMODNOTA, SERIDMODNOT, SERSTA^) VALUES ^(' ^|^| 
 	ECHO 	'''' ^|^| REPLACE^(CXANUM, '0', ''^) ^|^| '''' ^|^| ', ' ^|^| 
@@ -117,7 +117,7 @@ IF "%CHOOSE%"=="0" GOTO END
 	) >> %MIGR_ARQ%
 
 	(
-	ECHO OUTPUT "%TEMP_PATH%\CONFIG_NFCE.SQL ";
+	ECHO OUTPUT "%TEMP_PATH%\CONFIG_SRV.SQL";
 	ECHO SELECT 
 	ECHO 	'UPDATE CAIXA SET ' ^|^|
 	ECHO 	'CXAESP = ''%CXAESP%'', CXANFCESER = ''' ^|^| REPLACE^(CXANUM, '0', ''^) ^|^|
@@ -128,12 +128,16 @@ IF "%CHOOSE%"=="0" GOTO END
 	) >> %MIGR_ARQ%
 
 	(
-	
-	)
+	ECHO OUTPUT "%TEMP_PATH%\IP_CAIXAS.TXT";
+	ECHO SELECT 
+	ECHO 	CXANUM,
+	ECHO 	REPLACE^(REPLACE^(TRIM^(CXANOMMAQ^), ':', ''^), 'C', ''^)  
+	ECHO FROM CAIXA;
+	) >> %MIGR_ARQ%
 
 	(
 	ECHO UPDATE PROPRIO SET PRPNFCECFOP = '54050', PRPFUSHOR = '-03:00', PRPVERQRCODENFCE = '2.00'; COMMIT;
-	) >> %TEMP_PATH%\CONFIG_NFCE.SQL 
+	) >> %TEMP_PATH%\CONFIG_SRV.SQL 
 
 	(
 	ECHO.
@@ -246,7 +250,7 @@ IF EXIST "%SYSPDV_SRV_PATH%" (
 	ECHO   ==================================
 	ECHO.
 	)  >> "%LOG_PATH%"
-	ECHO INPUT '%TEMP_PATH%\CONFIG_NFCE.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_SRV_PATH%" >> "%LOG_PATH%" 2>&1
+	ECHO INPUT '%TEMP_PATH%\CONFIG_SRV.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_SRV_PATH%" >> "%LOG_PATH%" 2>&1
 	TIMEOUT /T 2
 	CLS
 	)
@@ -273,11 +277,12 @@ IF EXIST "%SYSPDV_SRV_PATH%" (
 	CLS
 	)
 
-IF EXIST "%SYSPDV_CAD_PATH%" (
+	:: Verifica se o arquivo com os IPs existe
+IF NOT EXIST %TEMP_PATH%\IP_CAIXAS.TXT (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO          [WEB_SERVICES CAD]
+	ECHO    Arquivo IP_CAIXAS nao encontrado! 
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -285,38 +290,134 @@ IF EXIST "%SYSPDV_CAD_PATH%" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO          [WEB_SERVICES CAD]
+	ECHO    Arquivo IP_CAIXAS nao encontrado! 
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	)  >> "%LOG_PATH%"
-	ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_CAD_PATH%" >> "%LOG_PATH%" 2>&1
-	TIMEOUT /T 2
-	CLS
+	) >> %LOG_PATH%
+	GOTO END
+)
+
+	:: Percorre cada linha do arquivo e executa o SQL no Firebird remoto
+FOR /F "tokens=2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
+	SET "IP=%%I"
+	
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO     Conectando ao Firebird no IP
+	ECHO.
+	ECHO           [!IP!]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	(
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO     Conectando ao Firebird no IP
+	ECHO.
+	ECHO           [!IP!]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	) >> %LOG_PATH%
+	
+	:: Executa a alteração via ISQL
+	ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP!:%SYSPDV_CAD_PATH% >> "%LOG_PATH%" 2>&1
+
+	IF %ERRORLEVEL% EQU 0 (
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO             [SUCESSO]
+		ECHO.
+		ECHO      Alteração realizada no CAD
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		(
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO             [SUCESSO]
+		ECHO.
+		ECHO      Alteração realizada no CAD
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		) >> %LOG_PATH%
+	) ELSE (
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO                [ERRO]
+		ECHO.
+		ECHO        Falha ao conectar no CAD
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		(
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO                [ERRO]
+		ECHO.
+		ECHO        Falha ao conectar no CAD
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		) >> %LOG_PATH%
 	)
 
-IF EXIST "%SYSPDV_MOV_PATH%" (
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	ECHO          [WEB_SERVICES MOV]
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	(
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	ECHO          [WEB_SERVICES MOV]
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	)  >> "%LOG_PATH%"
-	ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_MOV_PATH%" >> "%LOG_PATH%" 2>&1
-	TIMEOUT /T 2
-	CLS
+	ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP!:%SYSPDV_MOV_PATH% >> "%LOG_PATH%" 2>&1
+	IF %ERRORLEVEL% EQU 0 (
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO             [SUCESSO]
+		ECHO.
+		ECHO      Alteração realizada no MOV
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		(
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO             [SUCESSO]
+		ECHO.
+		ECHO      Alteração realizada no MOV
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		) >> %LOG_PATH%
+	) ELSE (
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO                [ERRO]
+		ECHO.
+		ECHO        Falha ao conectar no MOV
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		(
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO                [ERRO]
+		ECHO.
+		ECHO        Falha ao conectar no MOV
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		) >> %LOG_PATH%
 	)
+)
+
+:END
 
 	START %LOG_PATH%
-:END
+
 EXIT
