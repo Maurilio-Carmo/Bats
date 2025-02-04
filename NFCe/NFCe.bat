@@ -7,14 +7,18 @@ SET ISC_PASSWORD=masterkey
 SET SYSPDV_SRV_PATH=C:\SYSPDV\SYSPDV_SRV.FDB
 SET SYSPDV_CAD_PATH=C:\SYSPDV\SYSPDV_CAD.FDB
 SET SYSPDV_MOV_PATH=C:\SYSPDV\SYSPDV_MOV.FDB
-SET TEMP_PATH=C:\SYSPDV\
+SET TEMP_PATH=C:\SYSPDV\NFCE\TEMP
+SET MIGR_ARQ=%TEMP_PATH%\REQUISITOS.SQL
 SET LOG_PATH=%TEMP_PATH%\Log_WebServices.txt
 
-	:: Verifica Caminho Temporario
-IF NOT EXIST "%TEMP_PATH%" (
-	MD "%TEMP_PATH%"
-	ATTRIB +H "%TEMP_PATH%"
-	)
+	:: Verifica se o diretório existe
+IF EXIST "%TEMP_PATH%" (
+    RD /S /Q "%TEMP_PATH%"
+)
+
+	:: Cria o diretório
+MD "%TEMP_PATH%"
+ATTRIB +H "%TEMP_PATH%"
 
 	:: Configura Caminho do Firebird
 IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\bin" (
@@ -42,11 +46,11 @@ CD /D %FIREBIRD_PATH%
 ECHO.
 ECHO   ==================================
 ECHO.
-ECHO        Escolha a Opcao da NFC-e!
+ECHO     Deseja NFC-e para todos PDV's!
 ECHO.
-ECHO             1 - Ativar
+ECHO               1 - Sim
 ECHO.
-ECHO             2 - Desativar
+ECHO               2 - Nao
 ECHO.
 ECHO.
 ECHO               0 - Sair
@@ -72,16 +76,86 @@ IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" IF "%CHOOSE%" NEQ "0" (
 )
 
 	:: Processar a escolha do usuário
-IF "%CHOOSE%"=="1" GOTO ATIVAR
-IF "%CHOOSE%"=="2" GOTO DESATIVAR
+IF "%CHOOSE%"=="1" (
+	SET "CXAESP=NFC"
+	GOTO ATIVAR
+)
+
+IF "%CHOOSE%"=="2" (
+	SET "CXAESP=CFE"
+)
+
 IF "%CHOOSE%"=="0" GOTO END
 
 	:: Ativa a NFC-e
 :ATIVAR
-	
 	(
-	ECHO UPDATE PROPRIO SET PRPNFCECFOP = '54050', PRPFUSHOR = '-03:00', PRPVERQRCODENFCE = '2.00'
+	ECHO SET HEADING OFF;
+	ECHO.
+	) > "%MIGR_ARQ%"
+
+	(
+	ECHO OUTPUT "%TEMP_PATH%\CONFIG_NFCE.SQL ";
+	ECHO SELECT 
+	ECHO 	'INSERT INTO SERIE_NOTA_FISCAL ^(SERTIP, SERDATCAD, SERNUMINI, SERNUMFIN, SERNUMATU, SERPERALT, SERMODNOTA, SERIDMODNOT, SERSTA^) VALUES ^(' ^|^| 
+	ECHO 	'''' ^|^| REPLACE^(CXANUM, '0', ''^) ^|^| '''' ^|^| ', ' ^|^| 
+	ECHO 	'''' ^|^| CURRENT_TIMESTAMP ^|^| '''' ^|^| ', ' ^|^| 
+	ECHO 	'''0000000001''' ^|^| ', ' ^|^| 
+	ECHO 	'''9999999999''' ^|^| ', ' ^|^| 
+	ECHO 	'''0000000000''' ^|^| ', ' ^|^| 
+	ECHO 	'''N''' ^|^| ', ' ^|^| 
+	ECHO 	'''NFCe''' ^|^| ', ' ^|^| 
+	ECHO 	'27' ^|^| ', ' ^|^| 
+	ECHO 	'''A''' ^|^| 
+	ECHO 	'^); COMMIT;'
+	ECHO FROM CAIXA C
+	ECHO 	WHERE NOT EXISTS
+	ECHO 		^(SELECT 1 FROM SERIE_NOTA_FISCAL S
+	ECHO 		WHERE S.SERTIP = REPLACE^(C.CXANUM, '0', ''^)
+	ECHO 			AND SERMODNOTA = 'NFCe'^);
+	ECHO.
+	) >> %MIGR_ARQ%
+
+	(
+	ECHO OUTPUT "%TEMP_PATH%\CONFIG_NFCE.SQL ";
+	ECHO SELECT 
+	ECHO 	'UPDATE CAIXA SET ' ^|^|
+	ECHO 	'CXAESP = ''%CXAESP%'', CXANFCESER = ''' ^|^| REPLACE^(CXANUM, '0', ''^) ^|^|
+	ECHO 	''' WHERE CXANUM = ''' ^|^| CXANUM ^|^|
+	ECHO 	'''; COMMIT;'
+	ECHO FROM CAIXA;
+	ECHO.
+	) >> %MIGR_ARQ%
+
+	(
+	
+	)
+
+	(
+	ECHO UPDATE PROPRIO SET PRPNFCECFOP = '54050', PRPFUSHOR = '-03:00', PRPVERQRCODENFCE = '2.00'; COMMIT;
 	) >> %TEMP_PATH%\CONFIG_NFCE.SQL 
+
+	(
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO        [EXPORTANDO ALTERACOES]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	(
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO        [EXPORTANDO ALTERACOES]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	)  >> "%LOG_PATH%"
+	ECHO INPUT '%MIGR_ARQ%'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_SRV_PATH%" >> "%LOG_PATH%" 2>&1
+	TIMEOUT /T 2
+	CLS
+	)
 
 	(
 	ECHO DELETE FROM WEBSERVICES; COMMIT;
@@ -159,7 +233,7 @@ IF EXIST "%SYSPDV_SRV_PATH%" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO                 [SRV]
+	ECHO        [IMPORTANDO ALTERACOES]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -167,7 +241,29 @@ IF EXIST "%SYSPDV_SRV_PATH%" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO                 [SRV]
+	ECHO        [IMPORTANDO ALTERACOES]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	)  >> "%LOG_PATH%"
+	ECHO INPUT '%TEMP_PATH%\CONFIG_NFCE.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_SRV_PATH%" >> "%LOG_PATH%" 2>&1
+	TIMEOUT /T 2
+	CLS
+	)
+
+IF EXIST "%SYSPDV_SRV_PATH%" (
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO          [WEB_SERVICES SRV]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	(
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO          [WEB_SERVICES SRV]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -181,7 +277,7 @@ IF EXIST "%SYSPDV_CAD_PATH%" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO                 [CAD]
+	ECHO          [WEB_SERVICES CAD]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -189,7 +285,7 @@ IF EXIST "%SYSPDV_CAD_PATH%" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO                 [CAD]
+	ECHO          [WEB_SERVICES CAD]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -203,7 +299,7 @@ IF EXIST "%SYSPDV_MOV_PATH%" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO                 [MOV]
+	ECHO          [WEB_SERVICES MOV]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -211,7 +307,7 @@ IF EXIST "%SYSPDV_MOV_PATH%" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO                 [MOV]
+	ECHO          [WEB_SERVICES MOV]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -221,5 +317,6 @@ IF EXIST "%SYSPDV_MOV_PATH%" (
 	CLS
 	)
 
+	START %LOG_PATH%
 :END
 EXIT
