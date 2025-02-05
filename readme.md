@@ -38,6 +38,10 @@ Este projeto contém várias funcionalidades e ferramentas úteis. Navegue pelas
 
   Ferramenta para migração de dados entre sistemas.
 
+- [**NFC-e**](NFCe/) 📃
+
+  Ferramenta para configurar NFC-e e Atualizar WebServices.
+
 - [**Repara Banco**](Repara%20Banco/) 🛠️
 
   Funções para reparo de bancos de dados.

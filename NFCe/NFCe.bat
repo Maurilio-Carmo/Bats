@@ -7,9 +7,9 @@ SET ISC_PASSWORD=masterkey
 SET SYSPDV_SRV_PATH=C:\SYSPDV\SYSPDV_SRV.FDB
 SET SYSPDV_CAD_PATH=C:\SYSPDV\SYSPDV_CAD.FDB
 SET SYSPDV_MOV_PATH=C:\SYSPDV\SYSPDV_MOV.FDB
-SET TEMP_PATH=C:\SYSPDV\NFCE\TEMP
+SET TEMP_PATH=C:\SYSPDV\NFCE\AUTO_CONFIG
 SET MIGR_ARQ=%TEMP_PATH%\REQUISITOS.SQL
-SET LOG_PATH=%TEMP_PATH%\Log_WebServices.txt
+SET LOG_PATH=%TEMP_PATH%\Log_Auto_Config.txt
 
 	:: Verifica se o diretório existe
 IF EXIST "%TEMP_PATH%" (
@@ -18,7 +18,6 @@ IF EXIST "%TEMP_PATH%" (
 
 	:: Cria o diretório
 MD "%TEMP_PATH%"
-ATTRIB +H "%TEMP_PATH%"
 
 	:: Configura Caminho do Firebird
 IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\bin" (
@@ -295,19 +294,22 @@ IF NOT EXIST %TEMP_PATH%\IP_CAIXAS.TXT (
 	ECHO   ==================================
 	ECHO.
 	) >> %LOG_PATH%
+	TIMEOUT /T 2
+	CLS
 	GOTO END
 )
 
 	:: Percorre cada linha do arquivo e executa o SQL no Firebird remoto
-FOR /F "tokens=2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
-	SET "IP=%%I"
+FOR /F "tokens=1,2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
+	SET "CAIXA=%%I"
+	SET "IP=%%J"
 	
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO     Conectando ao Firebird no IP
+	ECHO    Conectando ao Firebird no CAIXA
 	ECHO.
-	ECHO           [!IP!]
+	ECHO                [!CAIXA!]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -315,105 +317,65 @@ FOR /F "tokens=2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO     Conectando ao Firebird no IP
+	ECHO    Conectando ao Firebird no CAIXA
 	ECHO.
-	ECHO           [!IP!]
+	ECHO                [!CAIXA!]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
 	) >> %LOG_PATH%
+	TIMEOUT /T 2
+	CLS
 	
-	:: Executa a alteração via ISQL
+	:: Executa a alteração remota via ISQL no CAD
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO           [WEB_SERVICES CAD]
+	ECHO.
+	ECHO         Alterando CAIXA - !CAIXA!
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	(
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO           [WEB_SERVICES CAD]
+	ECHO.
+	ECHO         Alterando CAIXA - !CAIXA!
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	) >> %LOG_PATH%
 	ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP!:%SYSPDV_CAD_PATH% >> "%LOG_PATH%" 2>&1
+	TIMEOUT /T 2
+	CLS	
 
-	IF %ERRORLEVEL% EQU 0 (
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		ECHO             [SUCESSO]
-		ECHO.
-		ECHO      Alteração realizada no CAD
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		(
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		ECHO             [SUCESSO]
-		ECHO.
-		ECHO      Alteração realizada no CAD
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		) >> %LOG_PATH%
-	) ELSE (
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		ECHO                [ERRO]
-		ECHO.
-		ECHO        Falha ao conectar no CAD
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		(
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		ECHO                [ERRO]
-		ECHO.
-		ECHO        Falha ao conectar no CAD
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		) >> %LOG_PATH%
-	)
-
+	:: Executa a alteração remota via ISQL no MOV
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO           [WEB_SERVICES MOV]
+	ECHO.
+	ECHO         Alterando CAIXA - !CAIXA!
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	(
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO           [WEB_SERVICES MOV]
+	ECHO.
+	ECHO         Alterando CAIXA - !CAIXA!
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	) >> %LOG_PATH%
 	ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP!:%SYSPDV_MOV_PATH% >> "%LOG_PATH%" 2>&1
-	IF %ERRORLEVEL% EQU 0 (
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		ECHO             [SUCESSO]
-		ECHO.
-		ECHO      Alteração realizada no MOV
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		(
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		ECHO             [SUCESSO]
-		ECHO.
-		ECHO      Alteração realizada no MOV
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		) >> %LOG_PATH%
-	) ELSE (
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		ECHO                [ERRO]
-		ECHO.
-		ECHO        Falha ao conectar no MOV
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		(
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		ECHO                [ERRO]
-		ECHO.
-		ECHO        Falha ao conectar no MOV
-		ECHO.
-		ECHO   ==================================
-		ECHO.
-		) >> %LOG_PATH%
-	)
+	TIMEOUT /T 2
+	CLS
 )
 
 :END
