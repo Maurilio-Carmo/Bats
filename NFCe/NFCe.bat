@@ -81,6 +81,17 @@ IF "%CHOOSE%"=="1" (
 )
 
 IF "%CHOOSE%"=="2" (
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO      Mude manualmente para NFC!
+	ECHO.
+	ECHO       CADASTRO > CAIXA > CAIXA
+	ECHO.
+	ECHO        Emissor de Documento!
+	ECHO.
+	ECHO   ==================================
+	ECHO.
 	SET "CXAESP=CFE"
 )
 
@@ -304,29 +315,6 @@ FOR /F "tokens=1,2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
 	SET "CAIXA=%%I"
 	SET "IP=%%J"
 	
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	ECHO    Conectando ao Firebird no CAIXA
-	ECHO.
-	ECHO                [!CAIXA!]
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	(
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	ECHO    Conectando ao Firebird no CAIXA
-	ECHO.
-	ECHO                [!CAIXA!]
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	) >> %LOG_PATH%
-	TIMEOUT /T 2
-	CLS
-	
 	:: Executa a alteração remota via ISQL no CAD
 	ECHO.
 	ECHO   ==================================
@@ -335,8 +323,11 @@ FOR /F "tokens=1,2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
 	ECHO.
 	ECHO         Alterando CAIXA - !CAIXA!
 	ECHO.
+	ECHO            [!IP!]
+	ECHO.
 	ECHO   ==================================
 	ECHO.
+	ECHO   Processando...
 	(
 	ECHO.
 	ECHO   ==================================
@@ -344,6 +335,8 @@ FOR /F "tokens=1,2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
 	ECHO           [WEB_SERVICES CAD]
 	ECHO.
 	ECHO         Alterando CAIXA - !CAIXA!
+	ECHO.
+	ECHO            [!IP!]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -360,8 +353,11 @@ FOR /F "tokens=1,2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
 	ECHO.
 	ECHO         Alterando CAIXA - !CAIXA!
 	ECHO.
+	ECHO            [!IP!]
+	ECHO.
 	ECHO   ==================================
 	ECHO.
+	ECHO   Processando...
 	(
 	ECHO.
 	ECHO   ==================================
@@ -369,6 +365,8 @@ FOR /F "tokens=1,2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
 	ECHO           [WEB_SERVICES MOV]
 	ECHO.
 	ECHO         Alterando CAIXA - !CAIXA!
+	ECHO.
+	ECHO            [!IP!]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
