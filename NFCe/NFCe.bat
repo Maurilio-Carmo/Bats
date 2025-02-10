@@ -119,11 +119,11 @@ ECHO               0 - Sair
 ECHO.
 ECHO   ==================================
 ECHO.
-SET /P CHOOSE=" Digite a opcao: "
+SET /P NFCE=" Digite a opcao: "
 CLS
 
 	:: Validação de entrada Menu Inicial
-IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" IF "%CHOOSE%" NEQ "0" (
+IF "%NFCE%" NEQ "1" IF "%NFCE%" NEQ "2" IF "%NFCE%" NEQ "0" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -138,12 +138,12 @@ IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" IF "%CHOOSE%" NEQ "0" (
 )
 
 	:: Processar a escolha do usuário
-IF "%CHOOSE%"=="1" (
+IF "%NFCE%"=="1" (
 	SET "CXAESP=NFC"
 	GOTO ATIVAR
 )
 
-IF "%CHOOSE%"=="2" (
+IF "%NFCE%"=="2" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -160,18 +160,78 @@ IF "%CHOOSE%"=="2" (
 	CLS
 )
 
-IF "%CHOOSE%"=="0" GOTO END
+IF "%NFCE%"=="0" GOTO END
 
 	:: Ativa a NFC-e
 :ATIVAR
 
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO       Qual o CFOP para o NFC-e?
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	SET /P CFOP=" Digite o CFOP: "
+	CLS
 
-	(
+:ID_TOKEN
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO        Qual o numero ID Token?
+	ECHO.
+	ECHO               1 ou 2
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	SET /P ID_TOKEN=" Digite o ID: "
+	CLS
+	
+	IF "%ID_TOKEN%" NEQ "1" IF "%ID_TOKEN%" NEQ "2" (
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO             Opcao invalida!
+		ECHO      Por favor, escolha 1 ou 2!
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		PAUSE
+		CLS
+		GOTO ID_TOKEN
+	)
+
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO           Qual o CSC Token?
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	SET /P CSC_TOKEN=" Digite o CSC: "
+	CLS
+
+	:: Verifica SGBD do Server
+FOR /F "TOKENS=2*" %%A IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\SYSPDV_SERVER\UNICONNECTION" /V "PROVIDERNAME" ^| MORE') DO SET SGBD_SERVER=%%B
+
+	:: Verificar IP do Server
+FOR /F "TOKENS=3" %%A IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\SYSPDV_SERVER\UNICONNECTION" /V "SERVER" ^| MORE') DO SET IP_SERVER=%%A
+
+	:: Gera arquivo para importacao
+IF "!SGBD_SERVER!"=="InterBase" (
 	ECHO SET HEADING OFF;
 	ECHO.
-	) > "%MIGR_ARQ%"
-
-	(
+	ECHO OUTPUT "%TEMP_PATH%\CONFIG_SRV.SQL";
+	ECHO SELECT 
+	ECHO 	'UPDATE PROPRIO SET ' ^|^| 
+	ECHO 	'PRPNFCECFOP = ''' ^|^| SUBSTRING^(CAST^('%CFOP%' AS VARCHAR^(5^)^) ^|^| '00000' FROM 1 FOR 5^) ^|^| ''', ' ^|^| 
+	ECHO 	'PRPFUSHOR = ''-03:00'', ' ^|^| 
+	ECHO 	'PRPVERQRCODENFCE = ''2.00'', ' ^|^| 
+	ECHO 	'PRPIDTOKENNFCE = ''' ^|^| '%ID_TOKEN%'  ^|^| ''', ' ^|^| 
+	ECHO 	'PRPTOKENNFCE = ''' ^|^| '%CSC_TOKEN%' ^|^| '''; COMMIT;' 
+	ECHO FROM RDB$DATABASE;
+	ECHO.
 	ECHO OUTPUT "%TEMP_PATH%\CONFIG_SRV.SQL";
 	ECHO SELECT 
 	ECHO 	'INSERT INTO SERIE_NOTA_FISCAL ^(SERTIP, SERDATCAD, SERNUMINI, SERNUMFIN, SERNUMATU, SERPERALT, SERMODNOTA, SERIDMODNOT, SERSTA^) VALUES ^(' ^|^| 
@@ -191,9 +251,6 @@ IF "%CHOOSE%"=="0" GOTO END
 	ECHO 		WHERE S.SERTIP = REPLACE^(C.CXANUM, '0', ''^)
 	ECHO 			AND SERMODNOTA = 'NFCe'^);
 	ECHO.
-	) >> %MIGR_ARQ%
-
-	(
 	ECHO OUTPUT "%TEMP_PATH%\CONFIG_SRV.SQL";
 	ECHO SELECT 
 	ECHO 	'UPDATE CAIXA SET ' ^|^|
@@ -202,19 +259,58 @@ IF "%CHOOSE%"=="0" GOTO END
 	ECHO 	'''; COMMIT;'
 	ECHO FROM CAIXA;
 	ECHO.
-	) >> %MIGR_ARQ%
-
-	(
 	ECHO OUTPUT "%TEMP_PATH%\IP_CAIXAS.TXT";
 	ECHO SELECT 
 	ECHO 	CXANUM,
 	ECHO 	REPLACE^(REPLACE^(TRIM^(CXANOMMAQ^), ':', ''^), 'C', ''^)  
 	ECHO FROM CAIXA;
-	) >> %MIGR_ARQ%
+	) > "%MIGR_ARQ%"
 
-	(
-	ECHO UPDATE PROPRIO SET PRPNFCECFOP = RPAD('54050'), PRPFUSHOR = '-03:00', PRPVERQRCODENFCE = '2.00'; COMMIT;
-	) >> %TEMP_PATH%\CONFIG_SRV.SQL 
+IF "!SGBD_SERVER!"=="SQL Server" (
+	ECHO SET NOCOUNT ON;
+	ECHO.
+	ECHO SELECT 
+	ECHO 	'UPDATE PROPRIO SET ' + 
+	ECHO 	'PRPNFCECFOP = ''' + SUBSTRING^(CAST^('%CFOP%' AS VARCHAR^(5^)^) + '00000', 1, 5^) + ''', ' + 
+	ECHO 	'PRPFUSHOR = ''-03:00'', ' + 
+	ECHO 	'PRPVERQRCODENFCE = ''2.00'', ' + 
+	ECHO 	'PRPIDTOKENNFCE = ''' + '%ID_TOKEN%'  + ''', ' + 
+	ECHO 	'PRPTOKENNFCE = ''' + '%CSC_TOKEN%' + ''';' 
+	ECHO FROM PROPRIO;
+	ECHO.
+	ECHO SELECT 
+	ECHO 	'INSERT INTO SERIE_NOTA_FISCAL ^(SERTIP, SERDATCAD, SERNUMINI, SERNUMFIN, SERNUMATU, SERPERALT, SERMODNOTA, SERIDMODNOT, SERSTA^) VALUES ^(' + 
+	ECHO 	'''' + REPLACE^(CXANUM, '0', ''^) + '''' + ', ' + 
+	ECHO 	'''' + CAST^(CURRENT_TIMESTAMP AS VARCHAR^(30^)^) + '''' + ', ' + 
+	ECHO 	'''0000000001''' + ', ' + 
+	ECHO 	'''9999999999''' + ', ' + 
+	ECHO 	'''0000000000''' + ', ' + 
+	ECHO 	'''N''' + ', ' + 
+	ECHO 	'''NFCe''' + ', ' + 
+	ECHO 	'27' + ', ' + 
+	ECHO 	'''A''' + 
+	ECHO 	'^);'
+	ECHO FROM CAIXA C
+	ECHO 	WHERE NOT EXISTS
+	ECHO 		^(SELECT 1 FROM SERIE_NOTA_FISCAL S
+	ECHO 		WHERE S.SERTIP = REPLACE^(C.CXANUM, '0', ''^)
+	ECHO 			AND SERMODNOTA = 'NFCe'^);
+	ECHO.
+	ECHO SELECT 
+	ECHO 	'UPDATE CAIXA SET ' +
+	ECHO 	'CXAESP = ''NFC'', CXANFCESER = ''' + REPLACE^(CXANUM, '0', ''^) +
+	ECHO 	''' WHERE CXANUM = ''' + CXANUM +
+	ECHO 	''';'
+	ECHO FROM CAIXA;
+	ECHO.
+	ECHO SELECT 
+	ECHO 	CXANUM,
+	ECHO 	REPLACE^(REPLACE^(TRIM^(CXANOMMAQ^), ':', ''^), 'C', ''^)  
+	ECHO FROM CAIXA;
+	ECHO.
+	ECHO GO
+	ECHO.
+	) > "%MIGR_ARQ%"
 
 	(
 	ECHO.
@@ -233,7 +329,11 @@ IF "%CHOOSE%"=="0" GOTO END
 	ECHO   ==================================
 	ECHO.
 	)  >> "%LOG_PATH%"
-	ECHO INPUT '%MIGR_ARQ%'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_SRV_PATH%" >> "%LOG_PATH%" 2>&1
+	IF !SGBD_SERVER!=="InterBase" ( 
+	ECHO INPUT '%MIGR_ARQ%'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP_SERVER!:%SYSPDV_SRV_PATH% >> "%LOG_PATH%" 2>&1
+	) ELSE ( 
+		SQLCMD -s !IP_SERVER! -d syspdv -e -i "%MIGR_ARQ%" -o "%TEMP_PATH%\CONFIG_SRV.SQL" -h-1 -s "," >> "%LOG_PATH%" 2>&1
+	)
 	TIMEOUT /T 2
 	CLS
 	)
@@ -308,10 +408,83 @@ IF "%CHOOSE%"=="0" GOTO END
 	ECHO INSERT INTO "WEBSERVICES" ^("WSUF", "WSENDERECO", "WSCHAVE", "WSDOCUMENTO", "WSAMBIENTE"^) VALUES ^('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeInutilizacao4?WSDL', 'NFEINUTILIZACAO_4.00', 'NFCE', 'P'^); COMMIT;
 	ECHO INSERT INTO "WEBSERVICES" ^("WSUF", "WSENDERECO", "WSCHAVE", "WSDOCUMENTO", "WSAMBIENTE"^) VALUES ^('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeRetAutorizacao4?WSDL', 'NFERETAUTORIZACAO_4.00', 'NFCE', 'P'^); COMMIT;
 	ECHO INSERT INTO "WEBSERVICES" ^("WSUF", "WSENDERECO", "WSCHAVE", "WSDOCUMENTO", "WSAMBIENTE"^) VALUES ^('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeStatusServico4?WSDL', 'NFESTATUSSERVICO_4.00', 'NFCE', 'P'^); COMMIT;
-	) >> %TEMP_PATH%\INSERT_WEBSERVICES.SQL
+	) > %TEMP_PATH%\INSERT_WEBSERVICES.SQL
 
-FOR /F "TOKENS=2*" %%A IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\SYSPDV_SERVER\UNICONNECTION" /V "PROVIDERNAME" ^| MORE') DO SET SGBD_SERVER=%%B
-FOR /F "TOKENS=3" %%A IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\SYSPDV_SERVER\UNICONNECTION" /V "SERVER" ^| MORE') DO SET IP_SERVER=%%A
+IF "!SGBD_SERVER!"=="SQL Server" (
+	ECHO DELETE FROM WEBSERVICES;
+	ECHO GO
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://cad-homologacao.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx', 'NFECONSULTACADASTRO_2.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfeh.sefaz.ce.gov.br/nfe2/services/CadConsultaCadastro2?wsdl', 'NFECONSULTACADASTRO_3.10', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfeh.sefaz.ce.gov.br/nfe2/services/NfeDownloadNF?wsdl', 'NFEDOWNLOADNF_1.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx', 'NFEAUTORIZACAO_3.10', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx', 'NFERETAUTORIZACAO_3.10', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx', 'NFEINUTILIZACAO_4.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx', 'NFECONSULTAPROTOCOLO_4.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx', 'NFESTATUSSERVICO_4.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx', 'RECEPCAOEVENTO_4.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx', 'NFEAUTORIZACAO_4.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx', 'NFERETAUTORIZACAO_4.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://cad-homologacao.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx', 'NFECONSULTACADASTRO_4.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce/services/NfeAutorizacao?WSDL', 'NFEAUTORIZACAO_3.10', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce/services/NfeRetAutorizacao?WSDL', 'NFERETAUTORIZACAO_3.10', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce/services/NfeConsulta2?WSDL', 'NFECONSULTAPROTOCOLO_3.10', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce/services/NfeInutilizacao2?WSDL', 'NFEINUTILIZACAO_3.10', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce/services/NfeStatusServico2?WSDL', 'NFESTATUSSERVICO_3.10', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce/services/CadConsultaCadastro2?WSDL', 'NFECONSULTACADASTRO_3.10', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce/services/RecepcaoEvento?WSDL', 'RECEPCAOEVENTO_1.00', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'http://nfce.sefaz.ce.gov.br/pages/ShowNFCe.html', 'URL-QRCODE', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'http://nfce.sefaz.ce.gov.br/pages/ShowNFCe.html', 'URL-CONSULTANFCE', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'http://nfce.sefaz.ce.gov.br/pages/ShowNFCe.html', 'URL-CONSULTANFCE_2.00', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfceh.sefaz.ce.gov.br/nfce4/services/NFeAutorizacao4?WSDL', 'NFEAUTORIZACAO_3.10', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfceh.sefaz.ce.gov.br/nfce4/services/NFeRetAutorizacao4?WSDL', 'NFERETAUTORIZACAO_3.10', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfceh.sefaz.ce.gov.br/nfce4/services/NFeConsultaProtocolo4?WSDL', 'NFECONSULTAPROTOCOLO_3.10', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeInutilizacao4?WSDL', 'NFEINUTILIZACAO_3.10', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfceh.sefaz.ce.gov.br/nfce4/services/NFeStatusServico4?WSDL', 'NFESTATUSSERVICO_3.10', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfceh.sefaz.ce.gov.br/nfce4/services/CadConsultaCadastro4?WSDL', 'NFECONSULTACADASTRO_3.10', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfceh.sefaz.ce.gov.br/nfce4/services/NFeRecepcaoEvento4?WSDL', 'RECEPCAOEVENTO_1.00', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'http://nfceh.sefaz.ce.gov.br/pages/ShowNFCe.html?...', 'URL-QRCODE', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'http://nfceh.sefaz.ce.gov.br/pages/ShowNFCe.html?...', 'URL-CONSULTANFCE', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'http://nfceh.sefaz.ce.gov.br/pages/ShowNFCe.html?...', 'URL-CONSULTANFCE_2.00', 'NFCE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx', 'RECEPCAOEVENTO_1.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.sefaz.ce.gov.br/nfe2/services/NfeRecepcao2?wsdl', 'NFERECEPCAO_2.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.sefaz.ce.gov.br/nfe2/services/NfeRetRecepcao2?wsdl', 'NFERETRECEPCAO_2.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx', 'NFEINUTILIZACAO_2.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx', 'NFEINUTILIZACAO_3.10', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx', 'NFECONSULTAPROTOCOLO_2.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx', 'NFECONSULTAPROTOCOLO_3.10', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx', 'NFESTATUSSERVICO_2.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx', 'NFESTATUSSERVICO_3.10', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx', 'NFECONSULTACADASTRO_2.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.sefaz.ce.gov.br/nfe2/services/CadConsultaCadastro2?wsdl', 'NFECONSULTACADASTRO_3.10', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.sefaz.ce.gov.br/nfe2/services/NfeDownloadNF?wsdl', 'NFEDOWNLOADNF_1.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao.asmx', 'NFEAUTORIZACAO_3.10', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao.asmx', 'NFERETAUTORIZACAO_3.10', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx', 'NFEAUTORIZACAO_4.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx', 'NFERETAUTORIZACAO_4.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx', 'NFEINUTILIZACAO_4.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx', 'NFECONSULTAPROTOCOLO_4.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx', 'NFESTATUSSERVICO_4.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx', 'RECEPCAOEVENTO_4.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx', 'NFECONSULTACADASTRO_4.00', 'NFE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento.asmx', 'RECEPCAOEVENTO_1.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfeh.sefaz.ce.gov.br/nfe2/services/NfeRecepcao2?wsdl', 'NFERECEPCAO_2.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfeh.sefaz.ce.gov.br/nfe2/services/NfeRetRecepcao2?wsdl', 'NFERETRECEPCAO_2.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx', 'NFEINUTILIZACAO_2.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao2.asmx', 'NFEINUTILIZACAO_3.10', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx', 'NFECONSULTAPROTOCOLO_2.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta2.asmx', 'NFECONSULTAPROTOCOLO_3.10', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx', 'NFESTATUSSERVICO_2.00', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico2.asmx', 'NFESTATUSSERVICO_3.10', 'NFE', 'H');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/CadConsultaCadastro4?WSDL', 'NFECONSULTACADASTRO_4.00', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeAutorizacao4?WSDL', 'NFEAUTORIZACAO_4.00', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeConsultaProtocolo4?WSDL', 'NFECONSULTAPROTOCOLO_4.00', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeInutilizacao4?WSDL', 'NFEINUTILIZACAO_4.00', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeRetAutorizacao4?WSDL', 'NFERETAUTORIZACAO_4.00', 'NFCE', 'P');
+	ECHO INSERT INTO [WEBSERVICES] ([WSUF], [WSENDERECO], [WSCHAVE], [WSDOCUMENTO], [WSAMBIENTE]) VALUES ('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeStatusServico4?WSDL', 'NFESTATUSSERVICO_4.00', 'NFCE', 'P');
+	ECHO GO
+	) > %TEMP_PATH%\INSERT_WEBSERVICES_SQL.SQL
+
+		:: Inicia Alterações no Banco do Servidor
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -356,7 +529,7 @@ FOR /F "TOKENS=3" %%A IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\SY
 		ECHO   ==================================
 		ECHO.
 	) >> "%LOG_PATH%"
-	IF "!SGBD_SERVER!"=="InterBase" ( 
+	IF !SGBD_SERVER!=="InterBase" ( 
 		ECHO INPUT '%TEMP_PATH%\CONFIG_SRV.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP_SERVER!:%SYSPDV_SRV_PATH% >> "%LOG_PATH%" 2>&1 
 	) ELSE ( 
 		SQLCMD -s !IP_SERVER! -d syspdv -e -i %TEMP_PATH%\CONFIG_SRV.SQL >> "%LOG_PATH%" 2>&1 
@@ -380,10 +553,10 @@ FOR /F "TOKENS=3" %%A IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\SY
 		ECHO   ==================================
 		ECHO.
 	)  >> "%LOG_PATH%"
-	IF "!SGBD_SERVER!"=="InterBase" ( 
+	IF !SGBD_SERVER!=="InterBase" ( 
 		ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP_SERVER!:%SYSPDV_SRV_PATH% >> "%LOG_PATH%" 2>&1
 	) ELSE ( 
-		SQLCMD -s !IP_SERVER! -d syspdv -e -i %TEMP_PATH%\INSERT_WEBSERVICES.SQL >> "%LOG_PATH%" 2>&1 
+		SQLCMD -s !IP_SERVER! -d syspdv -e -i %TEMP_PATH%\INSERT_WEBSERVICES_SQL.SQL >> "%LOG_PATH%" 2>&1 
 	)
 	TIMEOUT /T 2
 	CLS
