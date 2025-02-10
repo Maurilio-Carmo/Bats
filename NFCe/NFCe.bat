@@ -149,19 +149,23 @@ IF "%CHOOSE%"=="2" (
 	ECHO.
 	ECHO      Mude manualmente para NFC!
 	ECHO.
-	ECHO       CADASTRO > CAIXA > CAIXA
+	ECHO       CADASTRO ^> CAIXA ^> CAIXA
 	ECHO.
 	ECHO        Emissor de Documento!
 	ECHO.
 	ECHO   ==================================
 	ECHO.
 	SET "CXAESP=CFE"
+	PAUSE
+	CLS
 )
 
 IF "%CHOOSE%"=="0" GOTO END
 
 	:: Ativa a NFC-e
 :ATIVAR
+
+
 	(
 	ECHO SET HEADING OFF;
 	ECHO.
@@ -209,7 +213,7 @@ IF "%CHOOSE%"=="0" GOTO END
 	) >> %MIGR_ARQ%
 
 	(
-	ECHO UPDATE PROPRIO SET PRPNFCECFOP = '54050', PRPFUSHOR = '-03:00', PRPVERQRCODENFCE = '2.00'; COMMIT;
+	ECHO UPDATE PROPRIO SET PRPNFCECFOP = RPAD('54050'), PRPFUSHOR = '-03:00', PRPVERQRCODENFCE = '2.00'; COMMIT;
 	) >> %TEMP_PATH%\CONFIG_SRV.SQL 
 
 	(
@@ -306,29 +310,60 @@ IF "%CHOOSE%"=="0" GOTO END
 	ECHO INSERT INTO "WEBSERVICES" ^("WSUF", "WSENDERECO", "WSCHAVE", "WSDOCUMENTO", "WSAMBIENTE"^) VALUES ^('CE', 'https://nfce.sefaz.ce.gov.br/nfce4/services/NFeStatusServico4?WSDL', 'NFESTATUSSERVICO_4.00', 'NFCE', 'P'^); COMMIT;
 	) >> %TEMP_PATH%\INSERT_WEBSERVICES.SQL
 
-IF EXIST "%SYSPDV_SRV_PATH%" (
+FOR /F "TOKENS=2*" %%A IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\SYSPDV_SERVER\UNICONNECTION" /V "PROVIDERNAME" ^| MORE') DO SET SGBD_SERVER=%%B
+FOR /F "TOKENS=3" %%A IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\SYSPDV_SERVER\UNICONNECTION" /V "SERVER" ^| MORE') DO SET IP_SERVER=%%A
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO        [IMPORTANDO ALTERACOES]
+	ECHO               [SERVER]
+	ECHO.
+	ECHO             [!SGBD_SERVER!]
+	ECHO.
+	ECHO            [!IP_SERVER!]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
 	(
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	ECHO        [IMPORTANDO ALTERACOES]
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	)  >> "%LOG_PATH%"
-	ECHO INPUT '%TEMP_PATH%\CONFIG_SRV.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_SRV_PATH%" >> "%LOG_PATH%" 2>&1
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO               [SERVER]
+		ECHO.
+		ECHO             [!SGBD_SERVER!]
+		ECHO.
+		ECHO            [!IP_SERVER!]
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+	) >> "%LOG_PATH%"
 	TIMEOUT /T 2
 	CLS
-	)
 
-IF EXIST "%SYSPDV_SRV_PATH%" (
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO        [IMPORTANDO ALTERACOES]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO   Processando...
+	(
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO        [IMPORTANDO ALTERACOES]
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+	) >> "%LOG_PATH%"
+	IF "!SGBD_SERVER!"=="InterBase" ( 
+		ECHO INPUT '%TEMP_PATH%\CONFIG_SRV.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP_SERVER!:%SYSPDV_SRV_PATH% >> "%LOG_PATH%" 2>&1 
+	) ELSE ( 
+		SQLCMD -s !IP_SERVER! -d syspdv -e -i %TEMP_PATH%\CONFIG_SRV.SQL >> "%LOG_PATH%" 2>&1 
+	)
+	TIMEOUT /T 2
+	CLS
+
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -337,18 +372,22 @@ IF EXIST "%SYSPDV_SRV_PATH%" (
 	ECHO   ==================================
 	ECHO.
 	(
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	ECHO          [WEB_SERVICES SRV]
-	ECHO.
-	ECHO   ==================================
-	ECHO.
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO          [WEB_SERVICES SRV]
+		ECHO.
+		ECHO   ==================================
+		ECHO.
 	)  >> "%LOG_PATH%"
-	ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_SRV_PATH%" >> "%LOG_PATH%" 2>&1
+	IF "!SGBD_SERVER!"=="InterBase" ( 
+		ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP_SERVER!:%SYSPDV_SRV_PATH% >> "%LOG_PATH%" 2>&1
+	) ELSE ( 
+		SQLCMD -s !IP_SERVER! -d syspdv -e -i %TEMP_PATH%\INSERT_WEBSERVICES.SQL >> "%LOG_PATH%" 2>&1 
+	)
 	TIMEOUT /T 2
 	CLS
-	)
+
 
 	:: Verifica se o arquivo com os IPs existe
 IF NOT EXIST %TEMP_PATH%\IP_CAIXAS.TXT (
@@ -360,13 +399,13 @@ IF NOT EXIST %TEMP_PATH%\IP_CAIXAS.TXT (
 	ECHO   ==================================
 	ECHO.
 	(
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	ECHO    Arquivo IP_CAIXAS nao encontrado! 
-	ECHO.
-	ECHO   ==================================
-	ECHO.
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO    Arquivo IP_CAIXAS nao encontrado! 
+		ECHO.
+		ECHO   ==================================
+		ECHO.
 	) >> %LOG_PATH%
 	TIMEOUT /T 2
 	CLS
@@ -392,17 +431,17 @@ FOR /F "tokens=1,2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
 	ECHO.
 	ECHO   Processando...
 	(
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	ECHO           [WEB_SERVICES CAD]
-	ECHO.
-	ECHO         Alterando CAIXA - !CAIXA!
-	ECHO.
-	ECHO            [!IP!]
-	ECHO.
-	ECHO   ==================================
-	ECHO.
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO           [WEB_SERVICES CAD]
+		ECHO.
+		ECHO         Alterando CAIXA - !CAIXA!
+		ECHO.
+		ECHO            [!IP!]
+		ECHO.
+		ECHO   ==================================
+		ECHO.
 	) >> %LOG_PATH%
 	ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP!:%SYSPDV_CAD_PATH% >> "%LOG_PATH%" 2>&1
 	TIMEOUT /T 2
@@ -422,17 +461,17 @@ FOR /F "tokens=1,2 delims= " %%I IN (%TEMP_PATH%\IP_CAIXAS.TXT) DO (
 	ECHO.
 	ECHO   Processando...
 	(
-	ECHO.
-	ECHO   ==================================
-	ECHO.
-	ECHO           [WEB_SERVICES MOV]
-	ECHO.
-	ECHO         Alterando CAIXA - !CAIXA!
-	ECHO.
-	ECHO            [!IP!]
-	ECHO.
-	ECHO   ==================================
-	ECHO.
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO           [WEB_SERVICES MOV]
+		ECHO.
+		ECHO         Alterando CAIXA - !CAIXA!
+		ECHO.
+		ECHO            [!IP!]
+		ECHO.
+		ECHO   ==================================
+		ECHO.
 	) >> %LOG_PATH%
 	ECHO INPUT '%TEMP_PATH%\INSERT_WEBSERVICES.SQL'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% !IP!:%SYSPDV_MOV_PATH% >> "%LOG_PATH%" 2>&1
 	TIMEOUT /T 2
