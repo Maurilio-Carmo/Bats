@@ -11,13 +11,21 @@ Este script em batch automatiza a atualização e configuração dos WebServices
 Antes de utilizar o script, verifique se possui os seguintes itens configurados corretamente:
 
 - **Sistema Operacional:** Windows.
-- **Firebird 2.5** instalado nos caminhos:
-  - `C:\Program Files (x86)\Firebird\Firebird_2_5\bin`
-  - `C:\Program Files\Firebird\Firebird_2_5\bin`
-- **Banco de Dados SYSPDV:**
-  - Arquivos `SYSPDV_SRV.FDB`, `SYSPDV_CAD.FDB` e `SYSPDV_MOV.FDB` localizados em `C:\SYSPDV\`.
+
+- **SGBD Instalados** para alterações no Banco:
+  - `SQL Server`
+  - `Firebird 2.5`
+
+- **Banco de Dados SYSPDV:**  
+  - Arquivos do `SQL Server` ou `Firebird`.
+
 - **Permissões adequadas:**
-  - O usuário deve ter permissão para criar/excluir diretórios e executar comandos via ISQL.
+  - O usuário deve ter permissão para criar/excluir diretórios e executar comandos via `SQLCMD` ou `ISQL`.
+
+- **Informações do Cliente e Contabilidade:**
+  - `CFOP`
+  - `ID Token - CSC`
+  - `Certificado Digital` - Preferência de modelo - `A1` 
 
 ---
 
@@ -25,17 +33,18 @@ Antes de utilizar o script, verifique se possui os seguintes itens configurados 
 
 O script executa as seguintes funções:
 
-1. **Menu Interativo** 🔘
+1. **Menu Interativo** 💭
    - Permite escolher entre ativar NFC-e para todos os PDVs ou configurar Individualmente.
 
 2. **Configuração Automática** ⚙️
    - Atualiza tabelas essenciais do banco de dados:
+
+     - `PROPRIO` (parametrização de NFC-e).   
      - `SERIE_NOTA_FISCAL` (inserção condicional);
-     - `CAIXA` (atualização dos campos `CXAESP` e `CXANFCESER`);
-     - `PROPRIO` (parametrização de NFC-e).
+     - `CAIXA` (atualização da `Especie` e `Serie`);
 
 3. **Geração e Execução de Scripts SQL** 💻
-   - Cria arquivos temporários com os comandos SQL e os executa via ISQL.
+   - Cria arquivos temporários com os comandos SQL e os executa via `SQLCMD` ou `ISQL`.
 
 4. **Atualização Remota** 🌐
    - Lê a lista de CAIXAS (com seus respectivos IPs) e aplica as configurações remotamente.
@@ -59,7 +68,7 @@ O script executa as seguintes funções:
 
 3. **Processamento:**
    - O script cria um diretório temporário em `C:\SYSPDV\NFCE\AUTO_CONFIG`.
-   - Gera arquivos SQL e aplica as configurações nos bancos CAD e MOV de cada PDV.
+   - Gera arquivos SQL e aplica as configurações nos bancos SRV e CAD, MOV de cada PDV.
    - As mensagens e logs são exibidos na tela e salvos no arquivo de log.
 
 4. **Finalização:**

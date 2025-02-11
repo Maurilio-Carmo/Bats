@@ -165,6 +165,7 @@ IF "%NFCE%"=="0" GOTO END
 	:: Ativa a NFC-e
 :ATIVAR
 
+:CFOP
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -202,6 +203,7 @@ IF "%NFCE%"=="0" GOTO END
 		GOTO ID_TOKEN
 	)
 
+:CSC_TOKEN
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -212,6 +214,38 @@ IF "%NFCE%"=="0" GOTO END
 	SET /P CSC_TOKEN=" Digite o CSC: "
 	CLS
 
+	ECHO.
+	ECHO   ========================================
+	ECHO.
+	ECHO                [CFOP - %CFOP%]
+	ECHO.
+	ECHO                [ID Token - %ID_TOKEN%]
+	ECHO.
+	ECHO                 [CSC Token]
+	ECHO.
+	ECHO    [%CSC_TOKEN%]
+	ECHO.
+	ECHO   ========================================
+	ECHO.
+	TIMEOUT /T 2
+	CLS
+	(
+		ECHO.
+		ECHO   ========================================
+		ECHO.
+		ECHO                [CFOP - %CFOP%]
+		ECHO.
+		ECHO                [ID Token - %ID_TOKEN%]
+		ECHO.
+		ECHO                 [CSC Token]
+		ECHO.
+		ECHO    [%CSC_TOKEN%]
+		ECHO.
+		ECHO   ========================================
+		ECHO.
+	) >> "%LOG_PATH%"
+
+:SERVER
 	:: Verifica SGBD do Server
 FOR /F "TOKENS=2*" %%A IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432NODE\SYSPDV_SERVER\UNICONNECTION" /V "PROVIDERNAME" ^| MORE') DO SET SGBD_SERVER=%%B
 
