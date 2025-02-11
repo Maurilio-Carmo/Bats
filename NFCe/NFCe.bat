@@ -214,6 +214,37 @@ IF "%NFCE%"=="0" GOTO END
 	SET /P CSC_TOKEN=" Digite o CSC: "
 	CLS
 
+		:: Verifique se tem 36 caracteres
+	SET "LEN=0"
+	FOR /L %%A IN (0,1,35) DO (
+		SET "CHAR=!CSC_TOKEN:~%%A,1!"
+		IF NOT "%CHAR%"=="" SET /A LEN+=1
+	)
+
+	:: Se tiver 36 caracteres, valide o formato
+	IF %LEN% == 36 (
+		ECHO.
+		ECHO   ===================================
+		ECHO.
+		ECHO      CSC Token com formato VALIDO!
+		ECHO.
+		ECHO   ===================================
+		ECHO.
+		TIMEOUT /T 2
+		CLS
+	) ELSE (
+		ECHO.
+		ECHO   ===================================
+		ECHO.
+		ECHO    O CSC Token NAO tem 36 caracteres!
+		ECHO.
+		ECHO   ===================================
+		ECHO.
+		PAUSE
+		CLS
+		GOTO CSC_TOKEN
+	)
+
 	ECHO.
 	ECHO   ========================================
 	ECHO.
@@ -290,7 +321,7 @@ IF "!SGBD_SERVER!"=="InterBase" (
 	ECHO 	'PRPFUSHOR = ''-03:00'', ' ^|^| 
 	ECHO 	'PRPVERQRCODENFCE = ''2.00'', ' ^|^| 
 	ECHO 	'PRPIDTOKENNFCE = ''' ^|^| '%ID_TOKEN%'  ^|^| ''', ' ^|^| 
-	ECHO 	'PRPTOKENNFCE = ''' ^|^| '%CSC_TOKEN%' ^|^| '''; COMMIT;' 
+	ECHO 	'PRPTOKENNFCE = ''' ^|^| TRIM^('%CSC_TOKEN%'^) ^|^| '''; COMMIT;' 
 	ECHO FROM RDB$DATABASE;
 	ECHO.
 	ECHO OUTPUT "%TEMP_PATH%\CONFIG_SRV.SQL";
@@ -336,7 +367,7 @@ IF "!SGBD_SERVER!"=="SQL Server" (
 	ECHO 	'PRPFUSHOR = ''-03:00'', ' + 
 	ECHO 	'PRPVERQRCODENFCE = ''2.00'', ' + 
 	ECHO 	'PRPIDTOKENNFCE = ''' + '%ID_TOKEN%'  + ''', ' + 
-	ECHO 	'PRPTOKENNFCE = ''' + '%CSC_TOKEN%' + ''';' 
+	ECHO 	'PRPTOKENNFCE = ''' + TRIM^('%CSC_TOKEN%'^) + ''';' 
 	ECHO FROM PROPRIO;
 	ECHO.
 	ECHO SELECT 
