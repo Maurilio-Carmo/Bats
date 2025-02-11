@@ -214,37 +214,7 @@ IF "%NFCE%"=="0" GOTO END
 	SET /P CSC_TOKEN=" Digite o CSC: "
 	CLS
 
-		:: Verifique se tem 36 caracteres
-	SET "LEN=0"
-	FOR /L %%A IN (0,1,35) DO (
-		SET "CHAR=!CSC_TOKEN:~%%A,1!"
-		IF NOT "%CHAR%"=="" SET /A LEN+=1
-	)
-
-	:: Se tiver 36 caracteres, valide o formato
-	IF %LEN% == 36 (
-		ECHO.
-		ECHO   ===================================
-		ECHO.
-		ECHO      CSC Token com formato VALIDO!
-		ECHO.
-		ECHO   ===================================
-		ECHO.
-		TIMEOUT /T 2
-		CLS
-	) ELSE (
-		ECHO.
-		ECHO   ===================================
-		ECHO.
-		ECHO    O CSC Token NAO tem 36 caracteres!
-		ECHO.
-		ECHO   ===================================
-		ECHO.
-		PAUSE
-		CLS
-		GOTO CSC_TOKEN
-	)
-
+		:: Resultado
 	ECHO.
 	ECHO   ========================================
 	ECHO.
