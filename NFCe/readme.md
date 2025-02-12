@@ -66,6 +66,8 @@ O script executa as seguintes funções:
      - `2` - Configurar Individulmente
      - `0` - Sair
 
+     ⚡***Obs.: Na opção Individual deve-se alterar a especie dos caixas pela rotina de cadastro dos caixas `CADASTRO > CAIXA > CAIXA`***
+
 3. **Processamento:**
    - O script cria um diretório temporário em `C:\SYSPDV\NFCE\AUTO_CONFIG`.
    - Gera arquivos SQL e aplica as configurações nos bancos SRV e CAD, MOV de cada PDV.
