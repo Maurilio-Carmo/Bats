@@ -147,12 +147,7 @@ ECHO      Escolha a Opcao da Biometria!
 ECHO.
 ECHO             1 - Desativar
 ECHO.
-ECHO             2 - Restaurar
-ECHO.
-ECHO.
-ECHO             9 - Auto Destruir
-ECHO.
-ECHO               0 - Sair
+ECHO             2 - Reativar
 ECHO.
 ECHO   ==================================
 ECHO.
@@ -165,7 +160,7 @@ IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" IF "%CHOOSE%" NEQ "9" IF "%CHOOSE%" 
 	ECHO   ==================================
 	ECHO.
 	ECHO             Opcao invalida!
-	ECHO     Por favor, escolha 1, 2, 9 ou 0!
+	ECHO        Por favor, escolha 1 ou 2!
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -176,9 +171,7 @@ IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" IF "%CHOOSE%" NEQ "9" IF "%CHOOSE%" 
 
 	:: Processar a escolha do usuário
 IF "%CHOOSE%"=="1" GOTO DESATIVAR
-IF "%CHOOSE%"=="2" GOTO RESTAURAR
-IF "%CHOOSE%"=="9" GOTO DESTRUIR
-IF "%CHOOSE%"=="0" GOTO END
+IF "%CHOOSE%"=="2" GOTO REATIVAR
 
 :DESATIVAR
 ECHO.
@@ -263,7 +256,7 @@ IF EXIST "%TEMP_PATH%\Desativar_mov.sql" DEL "%TEMP_PATH%\Desativar_mov.sql"
 CLS
 GOTO INI
 
-:RESTAURAR
+:REATIVAR
 ECHO.
 ECHO   ==================================
 ECHO.
@@ -352,17 +345,15 @@ ECHO.
 ECHO   ==================================
 ECHO.
 START "" "%SYSPDV_EXE_PATH%" > NUL
-TIMEOUT /T 3
+TIMEOUT /T 5
 IF EXIST "%TEMP_PATH%\Restaurar_cad.sql" DEL "%TEMP_PATH%\Restaurar_cad.sql"
 IF EXIST "%TEMP_PATH%\Restaurar_mov.sql" DEL "%TEMP_PATH%\Restaurar_mov.sql"
 IF EXIST "%TEMP_PATH%\Locdigsen_Original.txt" DEL "%TEMP_PATH%\Locdigsen_Original.txt"
 IF EXIST "%TEMP_PATH%\Cxalocdigsen_Original.txt" DEL "%TEMP_PATH%\Cxalocdigsen_Original.txt"
 CLS
-GOTO INI
-
-:DESTRUIR
-	:: Comando para excluir o próprio script
-DEL "%~F0" /F /Q
+GOTO END
 
 :END
+	:: Comando para excluir o próprio script
+DEL "%~F0" /F /Q
 EXIT
