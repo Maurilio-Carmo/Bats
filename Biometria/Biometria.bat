@@ -72,6 +72,22 @@ SET SYSPDV_MOV_PATH=C:\SYSPDV\SYSPDV_MOV.FDB
 SET TEMP_PATH=C:\SYSPDV\TEMP
 SET LOG_PATH=%TEMP_PATH%\Log_Biometria.txt
 
+	:: Configura Caminho do Firebird
+IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\bin" (
+	SET FIREBIRD_PATH="C:\Program Files (x86)\Firebird\Firebird_2_5\bin"
+) ELSE (
+	SET FIREBIRD_PATH="C:\Program Files\Firebird\Firebird_2_5\bin"
+)
+
+	:: Configura Caminho do Aplicativo
+IF EXIST "C:\SYSPDV\SYSPDV_PDV.EXE" (
+	SET SYSPDV_EXE=SYSPDV_PDV.EXE
+	SET SYSPDV_EXE_PATH=C:\SYSPDV\SYSPDV_PDV.EXE
+) ELSE (
+	SET SYSPDV_EXE=SYSPDV_SCI.EXE
+	SET SYSPDV_EXE_PATH=C:\SYSPDV\SYSPDV_SCI.EXE
+)
+
 	:: Verifica Caminho Temporario
 IF NOT EXIST "%TEMP_PATH%" (
 	MD "%TEMP_PATH%"
@@ -108,13 +124,6 @@ IF NOT EXIST %SYSPDV_MOV_PATH% (
 	GOTO END
 	)
 
-	:: Configura Caminho do Firebird
-IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\bin" (
-	SET FIREBIRD_PATH="C:\Program Files (x86)\Firebird\Firebird_2_5\bin"
-) ELSE (
-	SET FIREBIRD_PATH="C:\Program Files\Firebird\Firebird_2_5\bin"
-)
-
 (
 	ECHO.
 	ECHO   ==================================
@@ -141,6 +150,8 @@ ECHO.
 ECHO             2 - Restaurar
 ECHO.
 ECHO.
+ECHO             9 - Auto Destruir
+ECHO.
 ECHO               0 - Sair
 ECHO.
 ECHO   ==================================
@@ -149,12 +160,12 @@ SET /P CHOOSE=" Digite a opcao: "
 CLS
 
 	:: Validação de entrada Menu Inicial
-IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" IF "%CHOOSE%" NEQ "0" (
+IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" IF "%CHOOSE%" NEQ "9" IF "%CHOOSE%" NEQ "0" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
 	ECHO             Opcao invalida!
-	ECHO     Por favor, escolha 1, 2 ou 0!
+	ECHO     Por favor, escolha 1, 2, 9 ou 0!
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -166,6 +177,7 @@ IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" IF "%CHOOSE%" NEQ "0" (
 	:: Processar a escolha do usuário
 IF "%CHOOSE%"=="1" GOTO DESATIVAR
 IF "%CHOOSE%"=="2" GOTO RESTAURAR
+IF "%CHOOSE%"=="9" GOTO DESTRUIR
 IF "%CHOOSE%"=="0" GOTO END
 
 :DESATIVAR
@@ -176,7 +188,7 @@ ECHO        Desativando Biometria...
 ECHO.
 ECHO   ==================================
 ECHO.
-TASKKILL /F /IM SYS* > NUL
+TASKKILL /F /IM %SYSPDV_EXE% > NUL
 TIMEOUT /T 2
 CLS
 
@@ -230,7 +242,6 @@ IF %ERRORLEVEL% NEQ 0 (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	START C:\SYSPDV\SYSPDV_PDV.EXE
 	PAUSE
 	CLS
 	GOTO INI
@@ -245,7 +256,7 @@ ECHO          Biometria Desativada!
 ECHO.
 ECHO   ==================================
 ECHO.
-START C:\SYSPDV\SYSPDV_PDV.EXE
+START "" "%SYSPDV_EXE_PATH%" > NUL
 TIMEOUT /T 3
 IF EXIST "%TEMP_PATH%\Desativar_cad.sql" DEL "%TEMP_PATH%\Desativar_cad.sql"
 IF EXIST "%TEMP_PATH%\Desativar_mov.sql" DEL "%TEMP_PATH%\Desativar_mov.sql"
@@ -260,7 +271,7 @@ ECHO        Restaurando Biometria...
 ECHO.
 ECHO   ==================================
 ECHO.
-TASKKILL /F /IM SYS* > NUL
+TASKKILL /F /IM %SYSPDV_EXE% > NUL
 TIMEOUT /T 2
 CLS
 
@@ -340,7 +351,7 @@ ECHO          Biometria Restaurada!
 ECHO.
 ECHO   ==================================
 ECHO.
-START C:\SYSPDV\SYSPDV_PDV.EXE
+START "" "%SYSPDV_EXE_PATH%" > NUL
 TIMEOUT /T 3
 IF EXIST "%TEMP_PATH%\Restaurar_cad.sql" DEL "%TEMP_PATH%\Restaurar_cad.sql"
 IF EXIST "%TEMP_PATH%\Restaurar_mov.sql" DEL "%TEMP_PATH%\Restaurar_mov.sql"
@@ -348,6 +359,10 @@ IF EXIST "%TEMP_PATH%\Locdigsen_Original.txt" DEL "%TEMP_PATH%\Locdigsen_Origina
 IF EXIST "%TEMP_PATH%\Cxalocdigsen_Original.txt" DEL "%TEMP_PATH%\Cxalocdigsen_Original.txt"
 CLS
 GOTO INI
+
+:DESTRUIR
+	:: Comando para excluir o próprio script
+DEL "%~F0" /F /Q
 
 :END
 EXIT
