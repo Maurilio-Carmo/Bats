@@ -1,5 +1,6 @@
-$Host.UI.RawUI.BackgroundColor = "DarkYellow"
-Clear-Host
+$Host.UI.RawUI.BackgroundColor = "DarkBlue"  # Muda o fundo para azul escuro
+$Host.UI.RawUI.ForegroundColor = "Yellow"  # Muda a letra para amarela
+Clear-Host  # Aplica a mudança
 
 # Definição de caminhos dos bancos de dados
 $DB_PATH_SYSPDV = "C:\SYSPDV\SYSPDV_SRV.FDB"
