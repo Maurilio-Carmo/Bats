@@ -1,4 +1,4 @@
-$Host.UI.RawUI.BackgroundColor = "DarkBlue"  # Muda o fundo para azul escuro
+$Host.UI.RawUI.BackgroundColor = "Dark"  # Muda o fundo para azul escuro
 $Host.UI.RawUI.ForegroundColor = "Yellow"  # Muda a letra para amarela
 Clear-Host  # Aplica a mudança
 
