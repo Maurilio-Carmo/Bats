@@ -13,11 +13,18 @@ $ISC_PASSWORD = "masterkey"
 
 function Show-MainMenu {
     Clear-Host
+    Write-Host ""
     Write-Host "`n   =================================="
+    Write-Host ""
     Write-Host "`n     Escolha o Gerenciador do Banco!"
-    Write-Host "`n        1 - Firebird 2.5"
-    Write-Host "`n        2 - SQL Server"
-    Write-Host "`n        0 - Sair"
+    Write-Host ""
+    Write-Host "`n          1 - Firebird 2.5"
+    Write-Host ""
+    Write-Host "`n          2 - SQL Server"
+    Write-Host ""
+    Write-Host ""
+    Write-Host "`n          0 - Sair"
+    Write-Host ""
     Write-Host "`n   =================================="
     Write-Host ""
     $choice = Read-Host "Digite a opção"
@@ -27,7 +34,14 @@ function Show-MainMenu {
         "2" { SQLServer }
         "0" { Exit }
         default {
-            Write-Host "Opção inválida! Por favor, escolha 1, 2 ou 0!"
+            Write-Host ""
+            Write-Host "`n   =================================="
+            Write-Host ""
+            Write-Host "               Opção inválida!"
+            Write-Host "        Por favor, escolha 1, 2 ou 0!"
+            Write-Host ""
+            Write-Host "`n   =================================="
+            Write-Host ""
             Pause
             Show-MainMenu
         }
@@ -43,11 +57,18 @@ function Firebird {
     }
 
     Write-Host "`n   =================================="
+    Write-Host ""
     Write-Host "`n       Escolha o Banco de Dados"
-    Write-Host "`n          1 - SysPDV"
-    Write-Host "`n          2 - Midi 4"
-    Write-Host "`n          3 - Midi 5"
-    Write-Host "`n          0 - Voltar"
+    Write-Host ""
+    Write-Host "`n            1 - SysPDV"
+    Write-Host ""
+    Write-Host "`n            2 - Midi 4"
+    Write-Host ""
+    Write-Host "`n            3 - Midi 5"
+    Write-Host ""
+    Write-Host ""
+    Write-Host "`n            0 - Voltar"
+    Write-Host ""
     Write-Host "`n   =================================="
     Write-Host ""
     $db_choice = Read-Host "Digite a opção"
@@ -58,7 +79,14 @@ function Firebird {
         "3" { $DB_PATH = $DB_PATH_MIDI_5 }
         "0" { Show-MainMenu }
         default {
-            Write-Host "Opção inválida! Por favor, escolha 1, 2, 3 ou 0!"
+            Write-Host ""
+            Write-Host "`n   =================================="
+            Write-Host ""
+            Write-Host "              Opção inválida!"
+            Write-Host "       Por favor, escolha 1, 2, 3 ou 0!"
+            Write-Host ""
+            Write-Host "`n   =================================="
+            Write-Host ""
             Pause
             Firebird
         }
