@@ -1,99 +1,51 @@
-# Caminho da pasta contendo os scripts
+# URL base do repositório GitHub
+$repoUrl = "https://raw.githubusercontent.com/Maurilio-Carmo/Bats/main"
 
-$caminhoPasta = "https://github.com/Maurilio-Carmo/Bats/tree/main"
-
-
-
-# Função para listar todos os scripts na pasta
-
-Function Listar-Scripts {
-
-    Write-Host "Scripts disponíveis na pasta $caminhoPasta:"
-
-    Get-ChildItem -Path $caminhoPasta -Filter *.ps1 | ForEach-Object {
-
-        Write-Host $_.Name
-
-    }
-
-}
-
-
-
-# Função para executar um script específico
-
-Function Executar-Script {
-
-    param (
-
-        [string]$nomeScript
-
+# Função para listar os scripts no repositório GitHub
+function List-Scripts {
+    $scripts = @(
+        "Script1.ps1",  # Substitua pelos nomes reais dos seus scripts
+        "Script2.ps1"
+        # Adicione mais scripts conforme necessário
     )
 
+    $scripts | ForEach-Object { Write-Host "$($_)" }
+    return $scripts
+}
 
+# Função para baixar o script do GitHub e executar
+function Execute-Script($scriptName) {
+    $scriptUrl = "$repoUrl/$scriptName"
+    $scriptPath = "$env:TEMP\$scriptName"
 
-    $caminhoCompleto = Join-Path -Path $caminhoPasta -ChildPath $nomeScript
+    # Baixar o script para um arquivo temporário
+    Invoke-WebRequest -Uri $scriptUrl -OutFile $scriptPath
 
+    # Executar o script
+    Write-Host "Executando o script: $scriptName"
+    . $scriptPath
 
+    # Apagar o script temporário após execução
+    Remove-Item $scriptPath
+}
 
-    if (Test-Path $caminhoCompleto) {
+# Exibir o menu
+do {
+    Write-Host "Escolha um script para executar:"
+    $scripts = List-Scripts
+    $selection = Read-Host "Digite o nome do script ou 'sair' para finalizar"
 
-        Write-Host "Executando o script $nomeScript..."
-
-        & $caminhoCompleto
-
-    } else {
-
-        Write-Host "Script $nomeScript não encontrado na pasta."
-
+    if ($selection -eq "sair") {
+        Write-Host "Saindo do menu..."
+        break
     }
 
-}
+    # Verificar se o script escolhido existe
+    if ($scripts -contains $selection) {
+        Execute-Script $selection
+    } else {
+        Write-Host "Script não encontrado. Tente novamente."
+    }
 
-
-
-# Menu interativo
-
-Function Menu-Principal {
-
-    do {
-
-        Write-Host "`nMenu de Scripts"
-
-        Write-Host "1\. Listar Scripts"
-
-        Write-Host "2\. Executar um Script"
-
-        Write-Host "3\. Sair"
-
-        $opcao = Read-Host "Escolha uma opção"
-
-
-
-        switch ($opcao) {
-
-            "1" { Listar-Scripts }
-
-            "2" {
-
-                $nomeScript = Read-Host "Digite o nome do script que deseja executar"
-
-                Executar-Script -nomeScript $nomeScript
-
-            }
-
-            "3" { Write-Host "Saindo..." }
-
-            default { Write-Host "Opção inválida. Tente novamente." }
-
-        }
-
-    } while ($opcao -ne "3")
-
-}
-
-
-
-# Executar o menu principal
-
-Menu-Principal
+    Write-Host ""
+} while ($true)
