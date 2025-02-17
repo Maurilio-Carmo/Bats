@@ -53,9 +53,9 @@ Start-Sleep -Seconds 3
 Clear-Host
 
 $ipPath = "172.19.0.0"
-$routeCheck = Test-Connection -ComputerName $ipPath -Count 1 -Quiet
+$routeExists = route print | Select-String $ipRoute
 
-if ($routeCheck) {
+if ($routeExists) {
     Write-Host ""
     Write-Host "==================================="
     Write-Host ""
@@ -65,12 +65,11 @@ if ($routeCheck) {
     Write-Host ""
     Write-Host "           2 - Testar"
     Write-Host ""
-    Write-Host ""
     Write-Host "           0 - Sair"
     Write-Host ""
     Write-Host "==================================="
     Write-Host ""
-    $choice = Read-Host " Digite a opção:  "
+    $choice = Read-Host "Digite a opção"
 
     switch ($choice) {
         "1" { Remover }
@@ -81,14 +80,14 @@ if ($routeCheck) {
             Write-Host ""
             Write-Host "==================================="
             Write-Host ""
-            Write-Host "          Opcao invalida!"
+            Write-Host "          Opção inválida!"
             Write-Host "        Escolha 1, 2 ou 0."
             Write-Host ""
             Write-Host "==================================="
             Write-Host ""
             Pause
             Clear-Host
-            }
+        }
     }
 }
 else {
@@ -101,7 +100,7 @@ else {
     Write-Host ""
     Start-Sleep -Seconds 3
     Clear-Host
-    Adcionar
+    Adicionar
 }
 
 function Remover {
@@ -112,11 +111,21 @@ function Remover {
     Write-Host ""
     Write-Host "==================================="
     Write-Host ""
-    route delete 172.19.0.0
+
+    route delete 172.19.0.0 2>&1 | Out-Null
+
+    Write-Host ""
+    Write-Host "==================================="
+    Write-Host ""
+    Write-Host "     Rota deletada com sucesso!"
+    Write-Host ""
+    Write-Host "==================================="
+    Write-Host ""
+    Start-Sleep -Seconds 2
     Clear-Host
 }
 
-function Adcionar {
+function Adicionar {
     Write-Host ""
     Write-Host "==================================="
     Write-Host ""
@@ -124,7 +133,8 @@ function Adcionar {
     Write-Host ""
     Write-Host "==================================="
     Write-Host ""
-    $ipPath = Read-Host " Informe o IP: "
+
+    $ipPath = Read-Host "Informe o IP do gateway"
 
     Write-Host ""
     Write-Host "==================================="
@@ -133,11 +143,10 @@ function Adcionar {
     Write-Host ""
     Write-Host "==================================="
     Write-Host ""
-    route add 172.19.0.0 MASK 255.255.0.0 $ipPath -P
-    Start-Sleep -Seconds 3
-    Clear-Host
 
-    if ($?) {
+    route add 172.19.0.0 MASK 255.255.0.0 $ipPath -P 2>&1 | Out-Null
+
+    if ($LASTEXITCODE -eq 0) {
         Write-Host ""
         Write-Host "==================================="
         Write-Host ""
@@ -157,9 +166,11 @@ function Adcionar {
         Pause
         Exit
     }
+    Start-Sleep -Seconds 3
+    Clear-Host
 }
 
-function Test {
+function Testar {
     Write-Host ""
     Write-Host "==================================="
     Write-Host ""
@@ -167,6 +178,7 @@ function Test {
     Write-Host ""
     Write-Host "==================================="
     Write-Host ""
+
     $pingResult = Test-Connection 172.19.2.2 -Count 1 -Quiet
 
     if ($pingResult) {
