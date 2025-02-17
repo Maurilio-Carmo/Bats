@@ -27,7 +27,7 @@ function Show-MainMenu {
     Write-Host ""
     Write-Host "`n   =================================="
     Write-Host ""
-    $choice = Read-Host " Digite a opção: "
+    $choice = Read-Host "Digite a opção"
 
     switch ($choice) {
         "1" { Firebird }
@@ -73,7 +73,7 @@ function Firebird {
     Write-Host ""
     Write-Host "`n   =================================="
     Write-Host ""
-    $db_choice = Read-Host " Digite a opção: "
+    $db_choice = Read-Host "Digite a opção"
 
     switch ($db_choice) {
         "1" { $DB_PATH = $DB_PATH_SYSPDV }
