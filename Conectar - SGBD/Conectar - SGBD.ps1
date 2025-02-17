@@ -27,13 +27,14 @@ function Show-MainMenu {
     Write-Host ""
     Write-Host "`n   =================================="
     Write-Host ""
-    $choice = Read-Host "Digite a opção"
+    $choice = Read-Host " Digite a opção: "
 
     switch ($choice) {
         "1" { Firebird }
         "2" { SQLServer }
         "0" { Exit }
         default {
+            Clear-Host
             Write-Host ""
             Write-Host "`n   =================================="
             Write-Host ""
@@ -43,6 +44,7 @@ function Show-MainMenu {
             Write-Host "`n   =================================="
             Write-Host ""
             Pause
+            Clear-Host
             Show-MainMenu
         }
     }
@@ -71,14 +73,16 @@ function Firebird {
     Write-Host ""
     Write-Host "`n   =================================="
     Write-Host ""
-    $db_choice = Read-Host "Digite a opção"
+    $db_choice = Read-Host " Digite a opção: "
 
     switch ($db_choice) {
         "1" { $DB_PATH = $DB_PATH_SYSPDV }
         "2" { $DB_PATH = $DB_PATH_MIDI_4 }
         "3" { $DB_PATH = $DB_PATH_MIDI_5 }
         "0" { Show-MainMenu }
+        
         default {
+            Clear-Host
             Write-Host ""
             Write-Host "`n   =================================="
             Write-Host ""
@@ -88,6 +92,7 @@ function Firebird {
             Write-Host "`n   =================================="
             Write-Host ""
             Pause
+            Clear-Host
             Firebird
         }
     }

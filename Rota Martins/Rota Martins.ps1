@@ -37,11 +37,16 @@ if (-not (Check)) {
     Get-Privileges
 }
 
+Clear-Host
+
 # Main script
 Write-Host ""
 Write-Host "==================================="
-Write-Host "Verificando a rota..."
+Write-Host ""
+Write-Host "       Verificando a rota..."
+Write-Host ""
 Write-Host "==================================="
+Write-Host ""
 
 # Wait for 3 seconds
 Start-Sleep -Seconds 3
@@ -53,19 +58,34 @@ $routeCheck = Test-Connection -ComputerName $ipPath -Count 1 -Quiet
 if ($routeCheck) {
     Write-Host ""
     Write-Host "==================================="
-    Write-Host "Rota Encontrada..."
+    Write-Host ""
+    Write-Host "         Rota Encontrada..."
+    Write-Host ""
+    Write-Host "           1 - Recriar"
+    Write-Host ""
+    Write-Host "           2 - Testar"
+    Write-Host ""
+    Write-Host ""
+    Write-Host "           0 - Sair"
+    Write-Host ""
     Write-Host "==================================="
-    $choice = Read-Host "Escolha: 1 - Recriar, 2 - Testar, 0 - Sair"
+    Write-Host ""
+    $choice = Read-Host " Digite a opção:  "
 
     switch ($choice) {
-        "1" { Remove }
-        "2" { Test }
+        "1" { Remover }
+        "2" { Testar }
         "0" { Exit }
         default {
+            Clear-Host
             Write-Host ""
             Write-Host "==================================="
-            Write-Host "Opcao invalida! Escolha 1, 2 ou 0."
+            Write-Host ""
+            Write-Host "          Opcao invalida!"
+            Write-Host "        Escolha 1, 2 ou 0."
+            Write-Host ""
             Write-Host "==================================="
+            Write-Host ""
             Pause
             Clear-Host
             }
@@ -74,32 +94,45 @@ if ($routeCheck) {
 else {
     Write-Host ""
     Write-Host "==================================="
-    Write-Host "Rota Não Encontrada..."
-    Write-Host "==================================="
-    Start-Sleep -Seconds 3
-    Clear-Host
-}
-
-function Remove {
+    Write-Host ""
+    Write-Host "       Rota Não Encontrada..."
     Write-Host ""
     Write-Host "==================================="
-    Write-Host "Deletando Rota..."
+    Write-Host ""
+    Start-Sleep -Seconds 3
+    Clear-Host
+    Adcionar
+}
+
+function Remover {
+    Write-Host ""
     Write-Host "==================================="
+    Write-Host ""
+    Write-Host "         Deletando Rota..."
+    Write-Host ""
+    Write-Host "==================================="
+    Write-Host ""
     route delete 172.19.0.0
     Clear-Host
 }
 
-function Add {
+function Adcionar {
     Write-Host ""
     Write-Host "==================================="
-    Write-Host "ROTA MARTINS"
+    Write-Host ""
+    Write-Host "           ROTA MARTINS"
+    Write-Host ""
     Write-Host "==================================="
-    $ipPath = Read-Host "Informe o IP:"
+    Write-Host ""
+    $ipPath = Read-Host " Informe o IP: "
 
     Write-Host ""
     Write-Host "==================================="
-    Write-Host "Adicionando Rota..."
+    Write-Host ""
+    Write-Host "        Adicionando Rota..."
+    Write-Host ""
     Write-Host "==================================="
+    Write-Host ""
     route add 172.19.0.0 MASK 255.255.0.0 $ipPath -P
     Start-Sleep -Seconds 3
     Clear-Host
@@ -107,38 +140,60 @@ function Add {
     if ($?) {
         Write-Host ""
         Write-Host "==================================="
-        Write-Host "Rota adicionada com sucesso!"
+        Write-Host ""
+        Write-Host "    Rota adicionada com sucesso!"
+        Write-Host ""
         Write-Host "==================================="
+        Write-Host ""
     } else {
         Write-Host ""
         Write-Host "==================================="
-        Write-Host "[ERRO] Falha ao adicionar a rota..."
+        Write-Host ""
+        Write-Host "            [ ERRO ]"
+        Write-Host "   Falha ao adicionar a rota..."
+        Write-Host ""
         Write-Host "==================================="
+        Write-Host ""
+        Pause
+        Exit
     }
 }
 
 function Test {
     Write-Host ""
     Write-Host "==================================="
-    Write-Host "Testando conectividade..."
+    Write-Host ""
+    Write-Host "      Testando conectividade..."
+    Write-Host ""
     Write-Host "==================================="
+    Write-Host ""
     $pingResult = Test-Connection 172.19.2.2 -Count 1 -Quiet
 
     if ($pingResult) {
         Write-Host ""
         Write-Host "==================================="
-        Write-Host "Conectividade bem-sucedida!"
+        Write-Host ""
+        Write-Host "    Conectividade bem-sucedida!"
+        Write-Host ""
         Write-Host "==================================="
+        Write-Host ""
     } else {
         Write-Host ""
         Write-Host "==================================="
-        Write-Host "[ERRO] Falha na conectividade..."
+        Write-Host ""
+        Write-Host "             [ ERRO ]"
+        Write-Host "      Falha na conectividade..."
+        Write-Host ""
         Write-Host "==================================="
+        Write-Host ""
     }
 }
 
 Write-Host ""
 Write-Host "==================================="
-Write-Host "Script Finalizado."
+Write-Host ""
+Write-Host "        Script Finalizado."
+Write-Host ""
 Write-Host "==================================="
+Write-Host ""
 Pause
