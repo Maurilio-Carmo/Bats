@@ -1,4 +1,4 @@
-$Host.UI.RawUI.BackgroundColor = "Dark"  # Muda o fundo para azul escuro
+$Host.UI.RawUI.BackgroundColor = "DarkBlue"  # Muda o fundo para azul escuro
 $Host.UI.RawUI.ForegroundColor = "Yellow"  # Muda a letra para amarela
 Clear-Host  # Aplica a mudança
 
@@ -13,7 +13,6 @@ $ISC_PASSWORD = "masterkey"
 
 function Show-MainMenu {
     Clear-Host
-    Write-Host ""
     Write-Host "`n   =================================="
     Write-Host ""
     Write-Host "`n     Escolha o Gerenciador do Banco!"
@@ -42,7 +41,6 @@ function Show-MainMenu {
             Write-Host "        Por favor, escolha 1, 2 ou 0!"
             Write-Host ""
             Write-Host "`n   =================================="
-            Write-Host ""
             Pause
             Clear-Host
             Show-MainMenu
@@ -72,7 +70,6 @@ function Firebird {
     Write-Host "`n            0 - Voltar"
     Write-Host ""
     Write-Host "`n   =================================="
-    Write-Host ""
     $db_choice = Read-Host "Digite a opção"
 
     switch ($db_choice) {
@@ -83,14 +80,12 @@ function Firebird {
         
         default {
             Clear-Host
-            Write-Host ""
             Write-Host "`n   =================================="
             Write-Host ""
             Write-Host "              Opção inválida!"
             Write-Host "       Por favor, escolha 1, 2, 3 ou 0!"
             Write-Host ""
             Write-Host "`n   =================================="
-            Write-Host ""
             Pause
             Clear-Host
             Firebird
