@@ -1,3 +1,66 @@
+::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::: Elevate.cmd :::::::::::::::::
+:: Automatically check & get admin rights ::
+::::::::::::::::::::::::::::::::::::::::::::
+
+@echo off
+
+CLS
+
+ECHO.
+ECHO   =============================
+ECHO   ==== Running Admin shell ====
+ECHO   =============================
+
+:init
+setlocal DisableDelayedExpansion
+set cmdInvoke=1
+set winSysFolder=System32
+set "batchPath=%~0"
+for %%k in (%0) do set batchName=%%~nk
+set "vbsGetPrivileges=%temp%\OEgetPriv_%batchName%.vbs"
+setlocal EnableDelayedExpansion
+
+:checkPrivileges
+NET FILE 1>NUL 2>NUL
+if '%errorlevel%' == '0' ( goto gotPrivileges ) else ( goto getPrivileges )
+
+:getPrivileges
+if '%1'=='ELEV' (echo ELEV & shift /1 & goto gotPrivileges)
+ECHO.
+ECHO **************************************
+ECHO Invoking UAC for Privilege Escalation
+ECHO **************************************
+
+ECHO Set UAC = CreateObject^("Shell.Application"^) > "%vbsGetPrivileges%"
+ECHO args = "ELEV " >> "%vbsGetPrivileges%"
+ECHO For Each strArg in WScript.Arguments >> "%vbsGetPrivileges%"
+ECHO args = args ^& strArg ^& " "  >> "%vbsGetPrivileges%"
+ECHO Next >> "%vbsGetPrivileges%"
+
+if '%cmdInvoke%'=='1' goto InvokeCmd 
+
+ECHO UAC.ShellExecute "!batchPath!", args, "", "runas", 1 >> "%vbsGetPrivileges%"
+goto ExecElevation
+
+:InvokeCmd
+ECHO args = "/c """ + "!batchPath!" + """ " + args >> "%vbsGetPrivileges%"
+ECHO UAC.ShellExecute "%SystemRoot%\%winSysFolder%\cmd.exe", args, "", "runas", 1 >> "%vbsGetPrivileges%"
+
+:ExecElevation
+"%SystemRoot%\%winSysFolder%\WScript.exe" "%vbsGetPrivileges%" %*
+exit /B
+
+:gotPrivileges
+setlocal & cd /d %~dp0
+if '%1'=='ELEV' (del "%vbsGetPrivileges%" 1>nul 2>nul  &  shift /1)
+
+cls
+
+::::::::::::::::::::::::::::
+:::::::::: START :::::::::::
+::::::::::::::::::::::::::::
+
 @ECHO OFF
 COLOR 6
 
@@ -28,6 +91,33 @@ MD "%GERADOR_PATH%"
 
 CD /D %FIREBIRD_PATH%
 
+(
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO               [INICIADO]
+	ECHO.
+	ECHO       %DATE% as %TIME%
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+) > "%LOG_PATH%"
+
+	:: Verificar se o Banco Existe
+IF NOT EXIST "%DB_SYSPDV%" (
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+	ECHO                [ ERRO ]
+	ECHO.
+    ECHO     Banco de Dados NAO encontrado!
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    PAUSE
+	GOTO END
+) 
+
 :FUNCIONARIO
 	ECHO.
 	ECHO   ==================================
@@ -38,6 +128,19 @@ CD /D %FIREBIRD_PATH%
 	ECHO.
 	SET /P FUNCIONARIO=" Digite o Cod. do Funcionario: "
 	CLS
+IF "%FUNCIONARIO%"=="" (
+    CLS
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    ECHO      O campo NAO pode ficar vazio!
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    PAUSE
+    CLS
+    GOTO FUNCIONARIO
+)
 
 :CLIENTE
 	ECHO.
@@ -49,6 +152,19 @@ CD /D %FIREBIRD_PATH%
 	ECHO.
 	SET /P CLIENTE=" Digite o Cod. do Cliente: "
 	CLS
+IF "%CLIENTE%"=="" (
+    CLS
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    ECHO      O campo NAO pode ficar vazio!
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    PAUSE
+    CLS
+    GOTO CLIENTE
+)
 
 :OPERACAO
 	ECHO.
@@ -60,6 +176,19 @@ CD /D %FIREBIRD_PATH%
 	ECHO.
 	SET /P OPERACAO=" Digite a Operacao da Nota: "
 	CLS
+IF "%OPERACAO%"=="" (
+    CLS
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    ECHO      O campo NAO pode ficar vazio!
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    PAUSE
+    CLS
+    GOTO OPERACAO
+)
 
 :CFOP
 	ECHO.
@@ -71,6 +200,19 @@ CD /D %FIREBIRD_PATH%
 	ECHO.
 	SET /P CFOP=" Digite o CFOP da Nota: "
 	CLS
+IF "%CFOP%"=="" (
+    CLS
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    ECHO      O campo NAO pode ficar vazio!
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    PAUSE
+    CLS
+    GOTO CFOP
+)
 
 :ITENS
 	ECHO.
@@ -78,12 +220,25 @@ CD /D %FIREBIRD_PATH%
 	ECHO.
 	ECHO      Qual a QUANTIDADE DE ITENS?
     ECHO.
-    ECHO              [MAX. 250]
+    ECHO             [ MAX. 250 ]
 	ECHO.
 	ECHO   ==================================
 	ECHO.
 	SET /P ITENS=" Digite a Quantidade de Itens por Nota: "
 	CLS
+IF "%ITENS%"=="" (
+    CLS
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    ECHO      O campo NAO pode ficar vazio!
+    ECHO.
+    ECHO   ==================================
+    ECHO.
+    PAUSE
+    CLS
+    GOTO ITENS
+)
 
 :CUSTO
 	ECHO.
@@ -116,13 +271,75 @@ CD /D %FIREBIRD_PATH%
     )
 
 IF "%CUSTO%" EQU "1" ( 
-    SET CUSTO=SIM 
+    SET CUSTO=SIM
         ) ELSE ( 
-    SET CUSTO=NAO 
+    SET CUSTO=NAO
     )
 
+:PARAMETROS
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO          [ FUNCIONARIO: %FUNCIONARIO% ]
+	ECHO.
+	ECHO          [ CLIENTE: %CLIENTE% ]
+	ECHO.
+	ECHO          [ OPERACAO: %OPERACAO% ]
+	ECHO.
+	ECHO          [ CFOP: %CFOP% ]
+	ECHO.
+	ECHO          [ QTD. ITENS: %ITENS% ]
+	ECHO.
+	ECHO          [ PRC. CUSTO: %CUSTO% ]
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	(
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO          [ FUNCIONARIO: %FUNCIONARIO% ]
+		ECHO.
+		ECHO          [ CLIENTE: %CLIENTE% ]
+		ECHO.
+		ECHO          [ OPERACAO: %OPERACAO% ]
+		ECHO.
+		ECHO          [ CFOP: %CFOP% ]
+		ECHO.
+		ECHO          [ QTD. ITENS: %ITENS% ]
+		ECHO.
+		ECHO          [ PRC. CUSTO: %CUSTO% ]
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+	) >> "%LOG_PATH%"
+	TIMEOUT /T 3
+	CLS
+
 :EXPORTACAO
-    (
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO            [ EXPORTANDO ]
+	ECHO.
+	ECHO       Dados dos PEDIDOS DE VENDA
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO   Processando...
+	(
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO             [ EXPORTANDO ]
+		ECHO.
+		ECHO       Dados dos PEDIDOS DE VENDA
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+	) >> "%LOG_PATH%"
+
+	(
     ECHO SET HEADING OFF;
     ECHO.
     ECHO OUTPUT "%GERADOR_PATH%\PEDIDO_VENDA.SQL";
@@ -148,7 +365,7 @@ IF "%CUSTO%" EQU "1" (
     ECHO ^)
     ECHO 	-- SELEÇÃO DOS DADOS PARA INSERIR NOVOS PEDIDOS
     ECHO SELECT 
-    ECHO 	'INSERT INTO PEDIDO_VENDA ^(PVDNUM, FUNCOD, CLICOD, PVDTIPPRC, PVDDATEMI, PVDHOREMI, PVDSTATUS, PVDDOCIMP, PVDOBS, PVDVLR, PVDDCN, PVDACR, PVDBLODCN, PVDBLOEST, PVDBLOLIMCRD, PVDCLIDES, PVDCLIEND, PVDCLIBAI, PVDCLICID, PVDCLIEST, PVDCLINUM, PVDCLICEP, PVDCLICPFCGC, PVDBLODCN, CLITEL, PVDTIPEFET, OPECOD, CFOCOD, PVDTIPFRT, PVDDATPREV, PVDHORPREV, PVDTIPATD, PVDLOCCOD^) VALUES ^(''' ^|^| 
+    ECHO 	'INSERT INTO PEDIDO_VENDA ^(PVDNUM, FUNCOD, CLICOD, PVDTIPPRC, PVDDATEMI, PVDHOREMI, PVDSTATUS, PVDDOCIMP, PVDOBS, PVDVLR, PVDDCN, PVDACR, PVDBLODCN, PVDBLOEST, PVDBLOLIMCRD, PVDCLIDES, PVDCLIEND, PVDCLIBAI, PVDCLICID, PVDCLIEST, PVDCLINUM, PVDCLICEP, PVDCLICPFCGC, PVDCLITEL, PVDTIPEFET, OPECOD, CFOCOD, PVDTIPFRT, PVDDATPREV, PVDHORPREV, PVDTIPATD, PVDLOCCOD^) VALUES ^(''' ^|^| 
     ECHO 	LPAD^(S.PVDNUM, 10, '0'^) ^|^| ''', ''' ^|^|
     ECHO 	LPAD^(CAST^('%FUNCIONARIO%' AS INTEGER^), 6, '0'^) ^|^| ''', ''' ^|^|
     ECHO 	C.CLICOD ^|^| ''', ''' ^|^|
@@ -230,7 +447,7 @@ IF "%CUSTO%" EQU "1" (
 	ECHO 		CAST^(RDB$GET_CONTEXT^('USER_TRANSACTION', 'SEQ_ATUAL'^) AS INTEGER^) AS G FROM RDB$DATABASE
 	ECHO ^)
 	ECHO SELECT
-	ECHO	'INSERT INTO PEDIDO_VENDA_ITENS ^(PVISEQ, PVDNUM, PROCOD, PVIQTD, PVIVLRUNI, PVIVLRDCN, PVITIPDCN, PVIVLRACR, PVITIPACR, PVITRBID, PVIALQICMS, PVIITEEMB, PVIPRODES, PVIPRODESDZ, PVIFUNCOD, PVIPRCPRAT, PVIQTDATD, PVIPRCVDA, PVIPRODESVAR, PVIALQPIS, PVICSTPIS, PVIALQCOF, PVICSTCOF^) VALUES ^(''' ^|^| 
+	ECHO	'INSERT INTO PEDIDO_VENDA_ITEM ^(PVISEQ, PVDNUM, PROCOD, PVIQTD, PVIVLRUNI, PVIVLRDCN, PVITIPDCN, PVIVLRACR, PVITIPACR, PVITRBID, PVIALQICMS, PVIITEEMB, PVIPRODES, PVIPRODESDZ, PVIFUNCOD, PVIPRCPRAT, PVIQTDATD, PVIPRCVDA, PVIPRODESVAR, PVIALQPIS, PVICSTPIS, PVIALQCOF, PVICSTCOF^) VALUES ^(''' ^|^| 
 	ECHO 	-- OBTÉM O VALOR DE SEQ_ATUAL DO CTE ANTERIOR
 	ECHO 	^(SELECT C.G FROM C WHERE C.S ^>= 0^) ^|^| ''', ''' ^|^|
 	ECHO 	LPAD^(^(SELECT COUNT^(*^) 
@@ -249,8 +466,8 @@ IF "%CUSTO%" EQU "1" (
 	ECHO 	P.TRBID ^|^| ''', ''' ^|^|
 	ECHO 	T.TRBALQ ^|^| ''', ''' ^|^|
 	ECHO 	P.PROITEEMB ^|^| ''', ''' ^|^|
-	ECHO 	P.PRODES ^|^| ''', ''' ^|^|
-	ECHO 	P.PRODESRDZ ^|^| ''', ''' ^|^|
+	ECHO 	REPLACE^(P.PRODES, '''', ''^) ^|^| ''', ''' ^|^|
+	ECHO 	REPLACE^(P.PRODESRDZ, '''', ''^) ^|^| ''', ''' ^|^|
 	ECHO 	LPAD^(CAST^('%FUNCIONARIO%' AS INTEGER^), 6, '0'^) ^|^| ''', ''' ^|^|
 	ECHO 	'1' ^|^| ''', ''' ^|^|
 	ECHO 	P.PROQTDMINPRC2 ^|^| ''', ''' ^|^|
@@ -289,3 +506,126 @@ IF "%CUSTO%" EQU "1" (
     ) > "%GERADOR_ARQ%"
 
 ECHO INPUT "%GERADOR_ARQ%"; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% %DB_SYSPDV% >> "%LOG_PATH%" 2>&1
+TIMEOUT /T 2
+CLS
+
+:IMPORTACAO
+		:: PEDIDO DE VENDA
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO            [ IMPORTANDO ]
+	ECHO.
+	ECHO           PEDIDOS DE VENDA
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO   Processando...
+	(
+		ECHO.
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO            [ IMPORTANDO ]
+		ECHO.
+		ECHO           PEDIDOS DE VENDA
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+	) >> "%LOG_PATH%"
+
+ECHO INPUT "%GERADOR_PATH%\PEDIDO_VENDA.SQL"; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% %DB_SYSPDV% >> "%LOG_PATH%" 2>&1
+TIMEOUT /T 2
+CLS
+
+		:: PEDIDO DE VENDA ITENS
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO            [ IMPORTANDO ]
+	ECHO.
+	ECHO        PEDIDOS DE VENDA ITENS
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO   Processando...
+	(
+		ECHO.
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO            [ IMPORTANDO ]
+		ECHO.
+		ECHO        PEDIDOS DE VENDA ITENS
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+	) >> "%LOG_PATH%"
+
+ECHO INPUT "%GERADOR_PATH%\PEDIDO_VENDA_ITENS.SQL"; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% %DB_SYSPDV% >> "%LOG_PATH%" 2>&1
+TIMEOUT /T 2
+CLS
+
+		:: VALOR TOTAL DOS PEDIDOS
+	(
+	ECHO UPDATE PEDIDO_VENDA PV
+	ECHO 	SET PV.PVDVLR = ^(
+	ECHO 		SELECT CAST^(ROUND^(ROUND^(ROUND^(SUM^(PVIVLRUNI * PVIQTD^), 4^), 3^), 2^) AS NUMERIC^(15,2^)^)
+	ECHO 			FROM PEDIDO_VENDA_ITEM PVI
+	ECHO 			WHERE PVI.PVDNUM = PV.PVDNUM
+	ECHO 	^)
+	ECHO 	WHERE PV.PVDOBS = 'GERADOR DE PEDIDOS';
+	) > "%GERADOR_PATH%\PEDIDO_VENDA_VALOR.SQL"
+
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO            [ ATUALIZANDO ]
+	ECHO.
+	ECHO        PEDIDOS DE VENDA VALOR
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO   Processando...
+	(
+		ECHO.
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO            [ ATUALIZANDO ]
+		ECHO.
+		ECHO        PEDIDOS DE VENDA VALOR
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+	) >> "%LOG_PATH%"
+
+ECHO INPUT "%GERADOR_PATH%\PEDIDO_VENDA_VALOR.SQL"; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% %DB_SYSPDV% >> "%LOG_PATH%" 2>&1
+TIMEOUT /T 2
+CLS
+
+:END
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO             [ FINALIZADO ]
+	ECHO.
+	ECHO       %DATE% as %TIME%
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	(
+		ECHO.
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO             [ FINALIZADO ]
+		ECHO.
+		ECHO       %DATE% as %TIME%
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+	) >> "%LOG_PATH%"
+START %LOG_PATH%
+TIMEOUT /T 2
+EXIT
