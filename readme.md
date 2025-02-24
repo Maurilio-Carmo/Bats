@@ -34,6 +34,10 @@ Este projeto contém várias funcionalidades e ferramentas úteis. Navegue pelas
   
     Renomear arquivos XML conforme necessário.
 
+- [**Gerador de Pedidos**](Gerador%20de%20Pedidos/) 📝
+
+  Ferramenta para Geração de Pedidos de Venda.
+
 - [**Migrador**](Migrador/) 🚀
 
   Ferramenta para migração de dados entre sistemas.
