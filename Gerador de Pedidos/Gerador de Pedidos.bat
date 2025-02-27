@@ -470,9 +470,9 @@ IF "%CUSTO%" EQU "1" (
 	ECHO 	REPLACE^(P.PRODESRDZ, '''', ''^) ^|^| ''', ''' ^|^|
 	ECHO 	LPAD^(CAST^('%FUNCIONARIO%' AS INTEGER^), 6, '0'^) ^|^| ''', ''' ^|^|
 	ECHO 	'1' ^|^| ''', ''' ^|^|
-	ECHO 	P.PROQTDMINPRC2 ^|^| ''', ''' ^|^|
+	ECHO 	'0' ^|^| ''', ''' ^|^|
 	ECHO 	IIF^(UPPER^('%CUSTO%'^) = 'SIM', COALESCE^(NULLIF^(P.PROPRCCST, '0'^), P.PROPRCVDAVAR^), COALESCE^(NULLIF^(P.PROPRCVDAVAR, '0'^), P.PROPRCCST^)^) ^|^| ''', ''' ^|^|
-	ECHO 	P.PRODESVAR ^|^| ''', ''' ^|^|
+	ECHO 	COALESCE^(P.PRODESVAR, 'N'^) ^|^| ''', ''' ^|^|
 	ECHO 	-- CALCULA IMPOSTOS FEDERAIS ^(PIS, COFINS^) UTILIZANDO SUBCONSULTAS SIMPLIFICADAS
 	ECHO 	CAST^(COALESCE^(
 	ECHO 		^(SELECT FIRST^(1^) IF.IMPFEDALQ
