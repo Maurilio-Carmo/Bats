@@ -389,7 +389,7 @@ IF "%CUSTO%" EQU "1" (
     ECHO 	COALESCE^(NULLIF^(C.CLINUM, ''^), 'S/N'^) ^|^| ''', ''' ^|^|
     ECHO 	C.CLICEP ^|^| ''', ''' ^|^|
     ECHO 	C.CLICPFCGC ^|^| ''', ''' ^|^|
-    ECHO 	C.CLITEL ^|^| ''', ''' ^|^|
+    ECHO 	COALESCE^(C.CLITEL, ''^) ^|^| ''', ''' ^|^|
     ECHO 	'2' ^|^| ''', ''' ^|^|
     ECHO 	LPAD^(CAST^('%OPERACAO%' AS INTEGER^), 4, '0'^) ^|^| ''', ''' ^|^|
     ECHO 	RPAD^(CAST^('%CFOP%' AS INTEGER^), 5, '0'^) ^|^| ''', ''' ^|^|
