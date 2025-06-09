@@ -73,8 +73,8 @@ IF "%CHOOSE%"=="2" (
 	ECHO          "C:\XML\Quebra.txt"
 	ECHO.
 	ECHO.
-	ECHO    Serial MFE (9) + Sequencial (6)
-	ECHO         Ex.: 230075558021924
+	ECHO       Serie (3) + Sequencial (9)
+	ECHO           Ex.: 001000005314
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -147,9 +147,9 @@ FOR /F "usebackq delims=" %%I IN ("%QUEBRA%") DO (
 	ECHO Processando ID: !ID!
 
 		:: Varre todos os arquivos XML na pasta Completo e filtra pelo ID
-	FOR %%F IN ("%ORIGEM%\*%%I*.xml") DO (
+	FOR %%F IN ("%ORIGEM%\*%%I*-nfe.xml") DO (
 		SET "FILENAME=%%~nxF"
-		SET "SUBSTRING=!FILENAME:~22,15!"
+		SET "SUBSTRING=!FILENAME:~22,12!"
 
 		IF "!SUBSTRING!"=="!ID!" (
 			SET "FOUND=1"
@@ -157,10 +157,10 @@ FOR /F "usebackq delims=" %%I IN ("%QUEBRA%") DO (
 				:: Extrai o ano, mes e serial do nome do arquivo
 			SET "ANO=20!FILENAME:~2,2!"
 			SET "MES=!FILENAME:~4,2!"
-			SET "SERIAL=!FILENAME:~22,9!"
+			SET "SERIAL=!FILENAME:~22,3!"
 
 				:: Define o caminho de destino organizado
-			SET "CAMINHO_DESTINO=%DESTINO%\!ANO!\!MES!\!SERIAL!"
+			SET "CAMINHO_DESTINO=%DESTINO%\Ano - !ANO!\Mes - !MES!\Serial - !SERIAL!"
 
 				:: Cria o diretorio de destino, se nao existir
 			IF NOT EXIST "!CAMINHO_DESTINO!" (
