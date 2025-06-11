@@ -160,19 +160,19 @@ FOR /F "usebackq delims=" %%I IN ("%QUEBRA%") DO (
 			SET "SERIAL=!FILENAME:~22,3!"
 
 				:: Define o caminho de destino organizado
-			SET "CAMINHO_DESTINO=%DESTINO%\Ano - !ANO!\Mes - !MES!\Serial - !SERIAL!"
+			SET "DESTINO_QUEBRA=%DESTINO%\Ano - !ANO!\Mes - !MES!\Serial - !SERIAL!"
 
 				:: Cria o diretorio de destino, se nao existir
-			IF NOT EXIST "!CAMINHO_DESTINO!" (
+			IF NOT EXIST "!DESTINO_QUEBRA!" (
 				ECHO.>> "%LOGE%"
 				ECHO Criando diretorio de destino: >> "%LOGE%"
-				ECHO     !CAMINHO_DESTINO! >> "%LOGE%"
+				ECHO     !DESTINO_QUEBRA! >> "%LOGE%"
 				ECHO.>> "%LOGE%"
-				MKDIR "!CAMINHO_DESTINO!"
+				MKDIR "!DESTINO_QUEBRA!"
 			)
 
 				:: Copia o arquivo para o diretorio organizado e grava no log
-			COPY "%%F" "!CAMINHO_DESTINO!\" >NUL
+			COPY "%%F" "!DESTINO_QUEBRA!\" >NUL
 			ECHO Arquivo copiado: !FILENAME! com ID: !ID! >> "%LOGE%"
 		)
 	)
