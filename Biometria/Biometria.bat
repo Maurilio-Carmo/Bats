@@ -249,7 +249,7 @@ ECHO          Biometria Desativada!
 ECHO.
 ECHO   ==================================
 ECHO.
-START "%SYSPDV_EXE_PATH%" > NUL
+START "" "%SYSPDV_EXE_PATH%" > NUL
 TIMEOUT /T 3
 IF EXIST "%TEMP_PATH%\Desativar_cad.sql" DEL "%TEMP_PATH%\Desativar_cad.sql"
 IF EXIST "%TEMP_PATH%\Desativar_mov.sql" DEL "%TEMP_PATH%\Desativar_mov.sql"
@@ -344,7 +344,7 @@ ECHO          Biometria Restaurada!
 ECHO.
 ECHO   ==================================
 ECHO.
-START "%SYSPDV_EXE_PATH%" > NUL
+START "" "%SYSPDV_EXE_PATH%" > NUL
 TIMEOUT /T 5
 IF EXIST "%TEMP_PATH%\Restaurar_cad.sql" DEL "%TEMP_PATH%\Restaurar_cad.sql"
 IF EXIST "%TEMP_PATH%\Restaurar_mov.sql" DEL "%TEMP_PATH%\Restaurar_mov.sql"
