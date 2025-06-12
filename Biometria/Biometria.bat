@@ -81,10 +81,10 @@ IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\bin" (
 
 	:: Configura Caminho do Aplicativo
 IF EXIST "C:\SYSPDV\SYSPDV_PDV.EXE" (
-	SET SYSPDV_EXE=SYSPDV_PDV.EXE
+	SET SYSPDV_EXE=SYSPDV_PDV*
 	SET SYSPDV_EXE_PATH=C:\SYSPDV\SYSPDV_PDV.EXE
 ) ELSE (
-	SET SYSPDV_EXE=SYSPDV_SCI.EXE
+	SET SYSPDV_EXE=SYSPDV_SCI*
 	SET SYSPDV_EXE_PATH=C:\SYSPDV\SYSPDV_SCI.EXE
 )
 
@@ -249,7 +249,7 @@ ECHO          Biometria Desativada!
 ECHO.
 ECHO   ==================================
 ECHO.
-START "" "%SYSPDV_EXE_PATH%" > NUL
+START "%SYSPDV_EXE_PATH%" > NUL
 TIMEOUT /T 3
 IF EXIST "%TEMP_PATH%\Desativar_cad.sql" DEL "%TEMP_PATH%\Desativar_cad.sql"
 IF EXIST "%TEMP_PATH%\Desativar_mov.sql" DEL "%TEMP_PATH%\Desativar_mov.sql"
@@ -344,7 +344,7 @@ ECHO          Biometria Restaurada!
 ECHO.
 ECHO   ==================================
 ECHO.
-START "" "%SYSPDV_EXE_PATH%" > NUL
+START "%SYSPDV_EXE_PATH%" > NUL
 TIMEOUT /T 5
 IF EXIST "%TEMP_PATH%\Restaurar_cad.sql" DEL "%TEMP_PATH%\Restaurar_cad.sql"
 IF EXIST "%TEMP_PATH%\Restaurar_mov.sql" DEL "%TEMP_PATH%\Restaurar_mov.sql"
