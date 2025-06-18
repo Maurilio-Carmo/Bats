@@ -58,6 +58,10 @@ Este projeto contém várias funcionalidades e ferramentas úteis. Navegue pelas
 
   Serviço relacionado ao sistema de ponto de venda (PDV).
 
+- [**Tabela CLIENTE_ENDERECO**](Tabela%20CLIENTE_ENDERECO/) 🛢️
+
+  Criação da Tabela para clientes que usam SQL SERVER inferior ao 2019.
+
 ---
 
 ## Contribuições
