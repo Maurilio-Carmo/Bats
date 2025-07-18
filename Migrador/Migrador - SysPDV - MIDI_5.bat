@@ -208,7 +208,7 @@ IF "%SYS_EMPRESA%"=="1" (
 	ECHO SELECT
 	ECHO 	'UPDATE EMPRESA SET ' ^|^|
 	ECHO 	'CIDADE = ''' ^|^| PRPMUN ^|^| ''', ' ^|^|
-	ECHO 	'COMPLEMENTO = ''' ^|^| '' ^|^| ''', ' ^|^|
+	ECHO 	'COMPLEMENTO = ''' ^|^| COALESCE^(PRPCMP, ''^) ^|^| ''', ' ^|^|
 	ECHO 	'NUMERO = ' ^|^| TRIM^(PRPNUM^) ^|^| ', ' ^|^|
 	ECHO 	'STATE = ''' ^|^| PRPUF ^|^| ''', ' ^|^|
 	ECHO 	'LOGRADOURO = ''' ^|^| PRPEND ^|^| ''', ' ^|^|
@@ -220,7 +220,7 @@ IF "%SYS_EMPRESA%"=="1" (
 	ECHO 	'NOMEFANTASIA = ''' ^|^| COALESCE^(PRPFAN, PRPDES^) ^|^| ''', ' ^|^|
 	ECHO 	'TIPOPESSOA = ' ^|^| IIF^(PRPPFPJ = 'F', '1', '2'^) ^|^| ', ' ^|^|
 	ECHO 	'TELEFONE = ''' ^|^| PRPTEL ^|^| ''', ' ^|^|
-	ECHO 	'TELEFONE2 = ''' ^|^| PRPFAX ^|^| ''', ' ^|^|
+	ECHO 	'TELEFONE2 = ''' ^|^| COALESCE^(PRPFAX, ''^) ^|^| ''', ' ^|^|
 	ECHO 	'LICENCA = ''' ^|^| '' ^|^| ''', ' ^|^|
 	ECHO 	'VERSAO = ' ^|^| 'NULL' ^|^| ', ' ^|^|
 	ECHO 	'ULTIMA_ABERTURA = ''' ^|^| CURRENT_DATE ^|^| ''' ' ^|^|
@@ -321,7 +321,7 @@ IF "%SYS_FINALIZADORA%"=="1" (
 	ECHO 	'''' ^|^| FZDDES ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDGERCTAREC ^= 'S', '1', '0'^) ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDESP ^= '0', '0', '4'^) ^|^| ',' ^|^|
-	ECHO 	FZDPNTSAN ^|^| ',' ^|^|
+	ECHO 	COALESCE^(FZDPNTSAN, 0^) ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDACEPGT ^= 'S', '1', '0'^) ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDACEREC ^= 'S', '1', '0'^) ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDTRC ^= 'S', '1', '0'^) ^|^|
@@ -709,7 +709,7 @@ IF "%SYS_FORNECEDOR%"=="1" (
 	ECHO 	'INSERT INTO FORNECEDOR ^(CODIGO, CIDADE, COMPLEMENTO, NUMERO, STATE, LOGRADOURO, CEP, BAIRRO, RAZAOSOCIAL, DOCUMENTO, NOMEFANTASIA, TIPOPESSOA, TELEFONE, TELEFONE2^) VALUES ^(' ^|^|
 	ECHO 	'''' ^|^| LPAD^(FORCOD, 15, '0'^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| FORCID ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| FORCMP ^|^| '''' ^|^| ',' ^|^|
+	ECHO 	'''' ^|^| COALESCE^(FORCMP, ''^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	CAST^(COALESCE^(NULLIF^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(TRIM^(FORNUM^), 'S', ''^), '/', ''^), '-', ''^), 'N', ''^), ''^), 0^) AS INTEGER^) ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| FOREST ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| SUBSTRING^(FOREND FROM 1 FOR 40^) ^|^| '''' ^|^| ',' ^|^|
@@ -770,7 +770,7 @@ IF "%SYS_CLIENTES%"=="1" (
 	ECHO 	'INSERT INTO CLIENTE ^(CODIGO, CIDADE, COMPLEMENTO, NUMERO, STATE, LOGRADOURO, CEP, BAIRRO, RAZAOSOCIAL, DOCUMENTO, NOMEFANTASIA, TIPOPESSOA, TELEFONE, TELEFONE2, LIMITE, LIMITEUTILIZADO, STATUS^) VALUES ^(' ^|^|
 	ECHO 	'''' ^|^| LPAD^(CLICOD, 15, '0'^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| CLICID ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| CLICMP ^|^| '''' ^|^| ',' ^|^|
+	ECHO 	'''' ^|^| COALESCE^(CLICMP, ''^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	CAST^(COALESCE^(NULLIF^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(TRIM^(CLINUM^), 'S', ''^), '/', ''^), '-', ''^), 'N', ''^), ''^), 0^) AS INTEGER^) ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| CLIEST ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| SUBSTRING^(CLIEND FROM 1 FOR 40^) ^|^| '''' ^|^| ',' ^|^|
