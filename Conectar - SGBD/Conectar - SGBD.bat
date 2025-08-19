@@ -3,9 +3,9 @@ COLOR 6
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 	:: Definindo o caminho dos bancos de dados em variáveis
-SET DB_PATH_SYSPDV="C:\SYSPDV\SYSPDV_SRV.FDB"
-SET DB_PATH_MIDI_4="C:\MIDIPDV\MIDI_SRV.FDB"
-SET DB_PATH_MIDI_5="C:\MIDI\MIDI_SRV.FDB"
+SET DB_PATH_SYSPDV="C:\SYSPDV\"
+SET DB_PATH_MIDI_4="C:\MIDIPDV\"
+SET DB_PATH_MIDI_5="C:\MIDI\"
 
 	:: Definindo Usuario e Senha
 SET ISC_USER=SYSDBA
@@ -65,6 +65,47 @@ CLS
 	IF %CHOOSE% EQU 0 (
 		GOTO END
 	)
+
+:BANCO_FIREBIRD_MENU
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+	ECHO       Escolha o Banco de Dados
+	ECHO.
+	ECHO          1 - SysPDV
+	ECHO.
+	ECHO          2 - Midi 4
+	ECHO.
+	ECHO          3 - Midi 5
+	ECHO.
+	ECHO.
+	ECHO          0 - Voltar
+	ECHO.
+	ECHO   ==================================
+	ECHO.
+
+	SET /P DB_CHOICE= Digite a opcao: 
+	CLS
+
+	IF "%DB_CHOICE%" NEQ "1" IF "%DB_CHOICE%" NEQ "2" IF "%DB_CHOICE%" NEQ "3" IF "%DB_CHOICE%" NEQ "0" (
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		ECHO             Opcao invalida!
+		ECHO     Por favor, escolha 1, 2, 3 ou 0!
+		ECHO.
+		ECHO   ==================================
+		ECHO.
+		PAUSE
+		CLS
+		GOTO BANCO_FIREBIRD_MENU
+)
+
+	IF %DB_CHOICE% EQU 1 SET DB_PATH=%DB_PATH_SYSPDV%
+	IF %DB_CHOICE% EQU 2 SET DB_PATH=%DB_PATH_MIDI_4%
+	IF %DB_CHOICE% EQU 3 SET DB_PATH=%DB_PATH_MIDI_5%
+
+	IF %DB_CHOICE% EQU 0 GOTO INI
 
 :BANCO_FIREBIRD_MENU
 	ECHO.

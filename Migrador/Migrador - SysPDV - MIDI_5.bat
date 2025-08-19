@@ -215,9 +215,9 @@ IF "%SYS_EMPRESA%"=="1" (
 	ECHO 	'LOGRADOURO_TIPO = ''' ^|^| 'R' ^|^| ''', ' ^|^|
 	ECHO 	'CEP = ''' ^|^| PRPCEP ^|^| ''', ' ^|^|
 	ECHO 	'BAIRRO = ''' ^|^| PRPBAI ^|^| ''', ' ^|^|
-	ECHO 	'RAZAOSOCIAL = ''' ^|^| PRPDES ^|^| ''', ' ^|^|
+	ECHO 	'RAZAOSOCIAL = ''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(PRPDES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| ''', ' ^|^|
 	ECHO 	'DOCUMENTO = ''' ^|^| PRPCGC ^|^| ''', ' ^|^|
-	ECHO 	'NOMEFANTASIA = ''' ^|^| COALESCE^(PRPFAN, PRPDES^) ^|^| ''', ' ^|^|
+	ECHO 	'NOMEFANTASIA = ''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(COALESCE^(PRPFAN, PRPDES^)^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| ''', ' ^|^|
 	ECHO 	'TIPOPESSOA = ' ^|^| IIF^(PRPPFPJ = 'F', '1', '2'^) ^|^| ', ' ^|^|
 	ECHO 	'TELEFONE = ''' ^|^| PRPTEL ^|^| ''', ' ^|^|
 	ECHO 	'TELEFONE2 = ''' ^|^| COALESCE^(PRPFAX, ''^) ^|^| ''', ' ^|^|
@@ -269,7 +269,7 @@ IF "%SYS_FUNCIONARIO%"=="1" (
 	ECHO 	'''' ^|^| FUNCOD ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'0' ^|^| ',' ^|^|
 	ECHO 	'0' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| FUNAPE ^|^| '''' ^|^| ',' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(FUNAPE^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| 'QCUU' ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'0' ^|^| ',' ^|^|
 	ECHO 	'0' ^|^|
@@ -318,7 +318,7 @@ IF "%SYS_FINALIZADORA%"=="1" (
 	ECHO 	'''' ^|^| FZDCOD ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDPERTRC ^= 'S', '1', '0'^) ^|^| ',' ^|^|
 	ECHO 	FZDVERLIM ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| FZDDES ^|^| '''' ^|^| ',' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(FZDDES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDGERCTAREC ^= 'S', '1', '0'^) ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDESP ^= '0', '0', '4'^) ^|^| ',' ^|^|
 	ECHO 	COALESCE^(FZDPNTSAN, 0^) ^|^| ',' ^|^|
@@ -370,7 +370,7 @@ IF "%SYS_SECAO%"=="1" (
 	ECHO SELECT
 	ECHO 	'INSERT INTO SECAO ^(ID, DESCRICAO^) VALUES ^(' ^|^|
 	ECHO 	'''' ^|^| SECCOD ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| SECDES ^|^| '''' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(SECDES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^|
 	ECHO 	'^)' ^|^| ';' ^|^| ' COMMIT;'
 	ECHO FROM SECAO
 	ECHO 	WHERE SECCOD ^<^> '00';
@@ -416,7 +416,7 @@ IF "%SYS_GRUPO%"=="1" (
 	ECHO 	'INSERT INTO GRUPO ^(SECAO_ID, GRUPO_ID, DESCRICAO^) VALUES ^(' ^|^|
 	ECHO 	'''' ^|^| SECCOD ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| GRPCOD ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| GRPDES ^|^| '''' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(GRPDES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^|
 	ECHO 	'^)' ^|^| ';' ^|^| ' COMMIT;'
 	ECHO FROM GRUPO
 	ECHO 	WHERE SECCOD ^<^> '00';
@@ -463,7 +463,7 @@ IF "%SYS_SUBGRUPO%"=="1" (
 	ECHO 	'''' ^|^| SECCOD ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| GRPCOD ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| SGRCOD ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| SGRDES ^|^| '''' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(SGRDES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^|
 	ECHO 	'^)' ^|^| ';' ^|^| ' COMMIT;'
 	ECHO FROM SUBGRUPO
 	ECHO 	WHERE SECCOD ^<^> '00';
@@ -508,7 +508,7 @@ IF "%SYS_PRODUTO%"=="1" (
 	ECHO 	'INSERT INTO PRODUTO ^(CODIGO, CUSTO, DESCRICAO, MARKUP, MARKUP_POR_QUANTIDADE, DESCONTO_MAXIMO, QUANTIDADE_MINIMA, OFERTA, FORA_DE_LINHA, DATA_FORA_DE_LINHA, PRECO, PRECO_POR_QUANTIDADE, ENVIA_BALANCA, ITEM_EMBALAGEM, FRACIONADO, SECAO_ID, GRUPO_ID, SUBGRUPO_ID, UNIDADE, ULTIMA_ALTERACAO, PRECO_VARIAVEL, PERMITE_DESCONTO^) VALUES ^(' ^|^|
 	ECHO 	'''' ^|^| PROCOD ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	COALESCE^(PROPRCCST, 0^) ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(PRODES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^) ^|^| '''' ^|^| ',' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(PRODES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	COALESCE^(PROMRG1, 0^) ^|^| ',' ^|^|
 	ECHO 	COALESCE^(PROMRG2, 0^) ^|^| ',' ^|^|
 	ECHO 	COALESCE^(PRODCNMAX, 0^) ^|^| ',' ^|^|
@@ -647,7 +647,7 @@ IF "%SYS_SIMILARES%"=="1" (
 	ECHO SELECT
 	ECHO 	'INSERT INTO SIMILARES ^(ID, NOME^) VALUES ^(' ^|^|
 	ECHO 	'''' ^|^| SUBSTRING^(PROCODSIM FROM 3 FOR 6^) ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| SIMILARESDES ^|^| '''' ^|^| 
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(SIMILARESDES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^| 
 	ECHO 	'^)' ^|^| ';' ^|^| ' COMMIT;'
 	ECHO FROM SIMILARES;
 	ECHO.
@@ -715,9 +715,9 @@ IF "%SYS_FORNECEDOR%"=="1" (
 	ECHO 	'''' ^|^| SUBSTRING^(FOREND FROM 1 FOR 40^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	REPLACE^(FORCEP, '-', ''^) ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| FORBAI ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| FORDES ^|^| '''' ^|^| ',' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(FORDES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| FORCGC ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| COALESCE^(FORFAN, FORDES^) ^|^| '''' ^|^| ',' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(COALESCE^(FORFAN, FORDES^)^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	IIF^(FORPFPJ = 'J', '2', '1'^) ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(COALESCE^(FORTEL, ''^), '^(', ''^), '^)', ''^), '-', ''^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(COALESCE^(FORFAX, ''^), '^(', ''^), '^)', ''^), '-', ''^) ^|^| '''' ^|^|
@@ -776,9 +776,9 @@ IF "%SYS_CLIENTES%"=="1" (
 	ECHO 	'''' ^|^| SUBSTRING^(CLIEND FROM 1 FOR 40^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| REPLACE^(CLICEP, '-', ''^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| CLIBAI ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| CLIDES ^|^| '''' ^|^| ',' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(CLIDES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| CLICPFCGC ^|^| '''' ^|^| ',' ^|^|
-	ECHO 	'''' ^|^| COALESCE^(CLIFAN, CLIDES^) ^|^| '''' ^|^| ',' ^|^|
+	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(COALESCE^(CLIFAN, CLIDES^)^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	IIF^(CLIPFPJ = 'F', '1', '2'^) ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(COALESCE^(CLITEL, ''^), '^(', ''^), '^)', ''^), '-', ''^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(COALESCE^(CLITEL2, ''^), '^(', ''^), '^)', ''^), '-', ''^) ^|^| '''' ^|^| ',' ^|^|
