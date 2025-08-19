@@ -320,7 +320,12 @@ IF "%SYS_FINALIZADORA%"=="1" (
 	ECHO 	FZDVERLIM ^|^| ',' ^|^|
 	ECHO 	'''' ^|^| REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(REPLACE^(UPPER^(TRIM^(FZDDES^)^),'Á','A'^),'Â','A'^),'Ã','A'^),'É','E'^),'Ê','E'^),'Í','I'^),'Ó','O'^),'Ô','O'^),'Õ','O'^),'Ú','U'^),'Ç','C'^),'""',''^),'''',''^),';',' '^) ^|^| '''' ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDGERCTAREC ^= 'S', '1', '0'^) ^|^| ',' ^|^|
-	ECHO 	IIF^(FZDESP ^= '0', '0', '4'^) ^|^| ',' ^|^|
+	ECHO 	CASE
+	ECHO 		WHEN FZDESP ^= '0' THEN '0'
+	ECHO 		WHEN FZDESP ^= '2' THEN '1'
+	ECHO 		WHEN FZDESP ^= 'A' THEN '2'
+	ECHO 		WHEN FZDESP IN^('3', 'B'^) THEN '3'	
+	ECHO 	ELSE '4' END ^|^| ',' ^|^|
 	ECHO 	COALESCE^(FZDPNTSAN, 0^) ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDACEPGT ^= 'S', '1', '0'^) ^|^| ',' ^|^|
 	ECHO 	IIF^(FZDACEREC ^= 'S', '1', '0'^) ^|^| ',' ^|^|
