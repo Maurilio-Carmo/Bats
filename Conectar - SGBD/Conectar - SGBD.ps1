@@ -1,7 +1,7 @@
 # Para rodar este script:
 # 1. Abra o PowerShell como Administrador
 # 2. Execute se necessario: Set-ExecutionPolicy RemoteSigned
-# 3. Execute o comando: irm https://tinyurl.com/Conectar-SGBD | iex
+# 3. Execute o comando: irm https://tinyurl.com/Conectar-BD | iex
 
 # Configuração de aparência
 $Host.UI.RawUI.BackgroundColor = "DarkBlue"   # Fundo azul escuro
@@ -74,6 +74,7 @@ function Show-SistemaMenu {
     Write-Host "            0 - Voltar"
     Write-Host ""
     Write-Host "   =================================="
+    Write-Host ""
     $choice = Read-Host "Digite a opção"
 
     switch ($choice) {
@@ -102,6 +103,7 @@ function Show-BancoMenu {
     Write-Host "            0 - Voltar"
     Write-Host ""
     Write-Host "   =================================="
+    Write-Host ""
     $choice = Read-Host "Digite a opção"
 
     switch ($choice) {
