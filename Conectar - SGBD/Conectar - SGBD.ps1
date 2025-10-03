@@ -75,6 +75,7 @@ function Show-SistemaMenu {
     Write-Host ""
     Write-Host "   =================================="
     Write-Host ""
+
     $choice = Read-Host "Digite a opção"
 
     switch ($choice) {
@@ -104,6 +105,7 @@ function Show-BancoMenu {
     Write-Host ""
     Write-Host "   =================================="
     Write-Host ""
+    
     $choice = Read-Host "Digite a opção"
 
     switch ($choice) {
