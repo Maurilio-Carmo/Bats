@@ -1,26 +1,23 @@
-# ==========================
+# Para rodar este script:
+# 1. Abra o PowerShell como Administrador
+# 2. Execute se necessario: Set-ExecutionPolicy RemoteSigned
+# 3. Execute o comando: irm https://tinyurl.com/Conectar-SGBD | iex
+
 # Configuração de aparência
-# ==========================
 $Host.UI.RawUI.BackgroundColor = "DarkBlue"   # Fundo azul escuro
 $Host.UI.RawUI.ForegroundColor = "Yellow"     # Texto amarelo
 Clear-Host                                    # Aplica a mudança
 
-# ==========================
 # Definição de caminhos
-# ==========================
 $DB_PATH_SYSPDV = "C:\SYSPDV\SYSPDV"
 $DB_PATH_MIDI_4 = "C:\MIDIPDV\MIDI"
 $DB_PATH_MIDI_5 = "C:\MIDI\MIDI"
 
-# ==========================
 # Usuário e senha Firebird
-# ==========================
 $ISC_USER = "SYSDBA"
 $ISC_PASSWORD = "masterkey"
 
-# ==========================
 # Função: Menu principal
-# ==========================
 function Show-MainMenu {
     Clear-Host
     Write-Host "`n   =================================="
@@ -35,7 +32,7 @@ function Show-MainMenu {
     Write-Host "   =================================="
     Write-Host ""
 
-    $choice = Read-Host "Digite a opção:"
+    $choice = Read-Host "Digite a opção"
 
     switch ($choice) {
         "1" { Firebird }
@@ -48,9 +45,7 @@ function Show-MainMenu {
     }
 }
 
-# ==========================
 # Função: Firebird (menu 1)
-# ==========================
 function Firebird {
     Clear-Host
 
@@ -65,9 +60,7 @@ function Firebird {
     Show-SistemaMenu
 }
 
-# ==========================
 # Função: Menu de sistemas
-# ==========================
 function Show-SistemaMenu {
     Clear-Host
     Write-Host "`n   =================================="
@@ -95,9 +88,7 @@ function Show-SistemaMenu {
     }
 }
 
-# ==========================
 # Função: Menu de bancos
-# ==========================
 function Show-BancoMenu {
     Clear-Host
     Write-Host "`n   =================================="
@@ -125,9 +116,7 @@ function Show-BancoMenu {
     }
 }
 
-# ==========================
 # Função: Executar ISQL
-# ==========================
 function Run-Firebird {
     param([string]$DB_PATH)
 
@@ -138,9 +127,7 @@ function Run-Firebird {
     Show-MainMenu
 }
 
-# ==========================
 # Função: SQL Server
-# ==========================
 function SQLServer {
     Clear-Host
     Start-Process -NoNewWindow -Wait -FilePath "sqlcmd.exe" `
@@ -148,9 +135,7 @@ function SQLServer {
     Show-MainMenu
 }
 
-# ==========================
 # Função: Mensagem de erro
-# ==========================
 function Show-InvalidOption {
     param([string]$validOptions)
 
@@ -166,7 +151,5 @@ function Show-InvalidOption {
     Clear-Host
 }
 
-# ==========================
 # Início do programa
-# ==========================
 Show-MainMenu
