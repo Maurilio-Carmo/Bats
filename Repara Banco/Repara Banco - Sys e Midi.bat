@@ -18,7 +18,7 @@ set cmdInvoke=1
 set winSysFolder=System32
 set "batchPath=%~0"
 for %%k in (%0) do set batchName=%%~nk
-set "vbsGetPrivileges=%temp%\OEgetPriv_%batchName%.vbs"
+set "vbsGetPrivileges=%BAT%\OEgetPriv_%batchName%.vbs"
 setlocal EnableDelayedExpansion
 
 :checkPrivileges
@@ -73,11 +73,11 @@ SET DATA_HORA=%DATA_ATUAL% - %HORARIO%
 SET ISC_USER=SYSDBA
 SET ISC_PASSWORD=masterkey
 SET BACKUP_PATH=BKP Reparacao
-SET TEMP_PATH=TEMP Reparacao
+SET BAT_PATH=BAT Reparacao
 SET LOG_PATH="%BACKUP_PATH%\Log_Reparo.txt"
 
 SET NEW_PORT=3055
-SET TEMP_FIREBIRD_CONF="%TEMP_PATH%\firebird.conf"
+SET BAT_FIREBIRD_CONF="%BAT_PATH%\firebird.conf"
 IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\" (
 	SET FIREBIRD_CONF="C:\Program Files (x86)\Firebird\Firebird_2_5\firebird.conf"
 	) ELSE (
@@ -200,9 +200,9 @@ CD "%PATH_BASE%"
 	
 	:: Criando diretorios necessarios
 IF NOT EXIST "%BACKUP_PATH%" MKDIR "%BACKUP_PATH%"
-IF EXIST "%TEMP_PATH%" RMDIR /S /Q "%TEMP_PATH%"
-MKDIR "%TEMP_PATH%"
-ATTRIB +H "%TEMP_PATH%"
+IF EXIST "%BAT_PATH%" RMDIR /S /Q "%BAT_PATH%"
+MKDIR "%BAT_PATH%"
+ATTRIB +H "%BAT_PATH%"
 
 		:: Parando o serviço Firebird
 	ECHO.
@@ -217,10 +217,10 @@ ATTRIB +H "%TEMP_PATH%"
 	CLS
 
 		:: Alterar a porta no arquivo de configuração
-	COPY %FIREBIRD_CONF% %TEMP_FIREBIRD_CONF% >NUL
-	FINDSTR /V /R "^RemoteServicePort=" %TEMP_FIREBIRD_CONF% > "%TEMP_PATH%\temp_config.conf"
-	ECHO RemoteServicePort = %NEW_PORT% >> "%TEMP_PATH%\temp_config.conf"
-	COPY /Y "%TEMP_PATH%\temp_config.conf" %FIREBIRD_CONF% >NUL
+	COPY %FIREBIRD_CONF% %BAT_FIREBIRD_CONF% >NUL
+	FINDSTR /V /R "^RemoteServicePort=" %BAT_FIREBIRD_CONF% > "%BAT_PATH%\BAT_config.conf"
+	ECHO RemoteServicePort = %NEW_PORT% >> "%BAT_PATH%\BAT_config.conf"
+	COPY /Y "%BAT_PATH%\BAT_config.conf" %FIREBIRD_CONF% >NUL
 
 		:: Copia de Seguraça e arquivos para reparo
 	ECHO.
@@ -231,15 +231,15 @@ ATTRIB +H "%TEMP_PATH%"
 	ECHO   ==================================
 	ECHO.
 	COPY "%DB_FILE%.FDB" "%BACKUP_PATH%\%DB_FILE% - %DATA_HORA%.FDB" >NUL
-	MOVE "%DB_FILE%.FDB" "%TEMP_PATH%" >NUL
+	MOVE "%DB_FILE%.FDB" "%BAT_PATH%" >NUL
 	IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\bin" (
-		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\fbclient.dll" "%TEMP_PATH%" >NUL
-		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gfix.exe" "%TEMP_PATH%" >NUL
-		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe" "%TEMP_PATH%" >NUL
+		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\fbclient.dll" "%BAT_PATH%" >NUL
+		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gfix.exe" "%BAT_PATH%" >NUL
+		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe" "%BAT_PATH%" >NUL
 		) ELSE (
-		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\fbclient.dll" "%TEMP_PATH%" >NUL
-		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\gfix.exe" "%TEMP_PATH%" >NUL
-		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe" "%TEMP_PATH%" >NUL
+		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\fbclient.dll" "%BAT_PATH%" >NUL
+		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\gfix.exe" "%BAT_PATH%" >NUL
+		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe" "%BAT_PATH%" >NUL
 		)
 	CLS
 
@@ -267,11 +267,11 @@ ECHO         Corrigindo Corrupcao...
 ECHO.
 ECHO   ==================================
 ECHO.
-"%TEMP_PATH%\"GFIX -M -I "%TEMP_PATH%\%DB_FILE%.FDB" || GOTO ROLLBACK
+"%BAT_PATH%\"GFIX -M -I "%BAT_PATH%\%DB_FILE%.FDB" || GOTO ROLLBACK
 CLS
 
 	:: Alterando para somente leitura...
-"%TEMP_PATH%\"GFIX -MO READ_ONLY "%TEMP_PATH%\%DB_FILE%.FDB" || GOTO ROLLBACK
+"%BAT_PATH%\"GFIX -MO READ_ONLY "%BAT_PATH%\%DB_FILE%.FDB" || GOTO ROLLBACK
 	
 	:: Criando Arquivo de Reparacao...
 ECHO.
@@ -291,7 +291,7 @@ ECHO.
 	ECHO.
 	) >> %LOG_PATH%
 
-"%TEMP_PATH%\"GBAK -B -V -I -G -L -O "%TEMP_PATH%\%DB_FILE%.FDB" "%TEMP_PATH%\%DB_FILE% - %DATA_ATUAL%.GBK" >> %LOG_PATH% || GOTO ROLLBACK
+"%BAT_PATH%\"GBAK -B -V -I -G -L -O "%BAT_PATH%\%DB_FILE%.FDB" "%BAT_PATH%\%DB_FILE% - %DATA_ATUAL%.GBK" >> %LOG_PATH% || GOTO ROLLBACK
 TIMEOUT /T 2
 CLS
 	
@@ -314,12 +314,12 @@ ECHO.
 	ECHO.
 	) >> %LOG_PATH%
 	
-"%TEMP_PATH%\"GBAK -C -V "%TEMP_PATH%\%DB_FILE% - %DATA_ATUAL%.GBK" "%DB_FILE%.FDB" >> %LOG_PATH% || GOTO ROLLBACK
+"%BAT_PATH%\"GBAK -C -V "%BAT_PATH%\%DB_FILE% - %DATA_ATUAL%.GBK" "%DB_FILE%.FDB" >> %LOG_PATH% || GOTO ROLLBACK
 TIMEOUT /T 2
 CLS
 
 		:: Alterando para leitura e escrita...
-"%TEMP_PATH%\"GFIX -MO READ_WRITE "%DB_FILE%.FDB" || GOTO ROLLBACK
+"%BAT_PATH%\"GFIX -MO READ_WRITE "%DB_FILE%.FDB" || GOTO ROLLBACK
 SET "FOUND=0"
 GOTO END
 
@@ -349,7 +349,7 @@ GOTO END
 	ECHO.
 	NET STOP FirebirdGuardianDefaultInstance >NUL
 	TASKKILL /F /IM firebird* >NUL
-	COPY /Y %TEMP_FIREBIRD_CONF% %FIREBIRD_CONF% >NUL
+	COPY /Y %BAT_FIREBIRD_CONF% %FIREBIRD_CONF% >NUL
 	CLS
 	
 		:: Iniciando o serviço Firebird
@@ -363,8 +363,8 @@ GOTO END
 	NET START FirebirdGuardianDefaultInstance >NUL
 	CLS
 	
-	:: Limpando diretorio Temporario
-IF EXIST "%TEMP_PATH%" RMDIR /S /Q "%TEMP_PATH%"
+	:: Limpando diretorio BATorario
+IF EXIST "%BAT_PATH%" RMDIR /S /Q "%BAT_PATH%"
 IF "!FOUND!"=="0" (
 	ECHO.
 	ECHO   ==================================

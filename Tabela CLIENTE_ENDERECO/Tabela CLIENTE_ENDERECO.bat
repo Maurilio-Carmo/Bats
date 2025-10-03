@@ -2,17 +2,17 @@
 COLOR 6
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-SET TEMP_PATH=C:\SYSPDV\TEMP
-SET MIGR_ARQ=%TEMP_PATH%\REQUISITOS.SQL
-SET LOG_PATH=%TEMP_PATH%\Log_Config.txt
+SET BAT_PATH=C:\SYSPDV\BAT
+SET MIGR_ARQ=%BAT_PATH%\REQUISITOS.SQL
+SET LOG_PATH=%BAT_PATH%\Log_Config.txt
 	
     :: Verifica se o diretório existe
-IF EXIST "%TEMP_PATH%" (
-    RD /S /Q "%TEMP_PATH%"
+IF EXIST "%BAT_PATH%" (
+    RD /S /Q "%BAT_PATH%"
 )
 
 	:: Cria o diretório
-MD "%TEMP_PATH%"
+MD "%BAT_PATH%"
     
     ECHO.
     ECHO   ==================================

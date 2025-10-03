@@ -18,7 +18,7 @@ set cmdInvoke=1
 set winSysFolder=System32
 set "batchPath=%~0"
 for %%k in (%0) do set batchName=%%~nk
-set "vbsGetPrivileges=%temp%\OEgetPriv_%batchName%.vbs"
+set "vbsGetPrivileges=%BAT%\OEgetPriv_%batchName%.vbs"
 setlocal EnableDelayedExpansion
 
 :checkPrivileges
@@ -72,17 +72,17 @@ SET SERVICE_NAME=FirebirdGuardianDefaultInstance
 
 IF EXIST "C:\Midipdv" (
 	SET DB_PATH=C:\MidiPDV
-	SET TEMP_PATH=C:\MidiPDV\Temp
+	SET BAT_PATH=C:\MidiPDV\BAT
 ) ELSE (
 	SET DB_PATH=C:\Midi
-	SET TEMP_PATH=C:\Midi\Temp
+	SET BAT_PATH=C:\Midi\BAT
 )
 
 	:: Verificação do diretorio
-IF NOT EXIST "%TEMP_PATH%" MKDIR "%TEMP_PATH%"
+IF NOT EXIST "%BAT_PATH%" MKDIR "%BAT_PATH%"
 
 	:: Configuração do arquivo de caminho de backup
-SET CONFIG_FILE=%TEMP_PATH%\config_backup.ini
+SET CONFIG_FILE=%BAT_PATH%\config_backup.ini
 
 	:: Verificar se o caminho de backup já foi configurado
 IF EXIST "%CONFIG_FILE%" (
@@ -141,21 +141,21 @@ IF NOT DEFINED BACKUP_PATH (
 	CLS
 
 	:: Mudando para o diretório do banco de dados
-CD %TEMP_PATH%
+CD %BAT_PATH%
 
 	:: Verificação dos arquivos necessarios
-IF NOT EXIST "%TEMP_PATH%\fbclient.dll" (
+IF NOT EXIST "%BAT_PATH%\fbclient.dll" (
 	IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\bin" (
-		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\fbclient.dll" "%TEMP_PATH%" >NUL
+		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\fbclient.dll" "%BAT_PATH%" >NUL
 		) ELSE (
-		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\fbclient.dll" "%TEMP_PATH%" >NUL
+		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\fbclient.dll" "%BAT_PATH%" >NUL
 		))
 		
-IF NOT EXIST "%TEMP_PATH%\gbak.exe" (
+IF NOT EXIST "%BAT_PATH%\gbak.exe" (
 	IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\bin" (
-		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe" "%TEMP_PATH%" >NUL
+		COPY "C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe" "%BAT_PATH%" >NUL
 		) ELSE (
-		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe" "%TEMP_PATH%" >NUL
+		COPY "C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe" "%BAT_PATH%" >NUL
 		))
 
 	:: Captura o nome do dia da semana em português
@@ -191,8 +191,8 @@ SET BACKUP_FILE=%BACKUP_PATH%\Midi_srv_%DAY_NAME%.gbk
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	IF EXIST "%TEMP_PATH%\%DB_FILE%" DEL "%TEMP_PATH%\%DB_FILE%"	
-	COPY "%DB_PATH%\%DB_FILE%" "%TEMP_PATH%" >NUL
+	IF EXIST "%BAT_PATH%\%DB_FILE%" DEL "%BAT_PATH%\%DB_FILE%"	
+	COPY "%DB_PATH%\%DB_FILE%" "%BAT_PATH%" >NUL
 	IF EXIST "%BACKUP_FILE%" DEL "%BACKUP_FILE%"
 	CLS
 
@@ -229,9 +229,9 @@ SET BACKUP_FILE=%BACKUP_PATH%\Midi_srv_%DAY_NAME%.gbk
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	IF EXIST "%TEMP_PATH%\%DB_FILE%" DEL "%TEMP_PATH%\%DB_FILE%"
-	IF EXIST "%TEMP_PATH%\fbclient.dll" DEL "%TEMP_PATH%\fbclient.dll"
-	IF EXIST "%TEMP_PATH%\gbak.exe" DEL "%TEMP_PATH%\gbak.exe"
+	IF EXIST "%BAT_PATH%\%DB_FILE%" DEL "%BAT_PATH%\%DB_FILE%"
+	IF EXIST "%BAT_PATH%\fbclient.dll" DEL "%BAT_PATH%\fbclient.dll"
+	IF EXIST "%BAT_PATH%\gbak.exe" DEL "%BAT_PATH%\gbak.exe"
 
 :END
 	TIMEOUT /T 3 

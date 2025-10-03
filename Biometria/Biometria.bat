@@ -18,7 +18,7 @@ set cmdInvoke=1
 set winSysFolder=System32
 set "batchPath=%~0"
 for %%k in (%0) do set batchName=%%~nk
-set "vbsGetPrivileges=%temp%\OEgetPriv_%batchName%.vbs"
+set "vbsGetPrivileges=%BAT%\OEgetPriv_%batchName%.vbs"
 setlocal EnableDelayedExpansion
 
 :checkPrivileges
@@ -69,8 +69,8 @@ SET ISC_USER=SYSDBA
 SET ISC_PASSWORD=masterkey
 SET SYSPDV_CAD_PATH=C:\SYSPDV\SYSPDV_CAD.FDB
 SET SYSPDV_MOV_PATH=C:\SYSPDV\SYSPDV_MOV.FDB
-SET TEMP_PATH=C:\SYSPDV\TEMP
-SET LOG_PATH=%TEMP_PATH%\Log_Biometria.txt
+SET BAT_PATH=C:\SYSPDV\BAT
+SET LOG_PATH=%BAT_PATH%\Log_Biometria.txt
 
 	:: Configura Caminho do Firebird
 IF EXIST "C:\Program Files (x86)\Firebird\Firebird_2_5\bin" (
@@ -88,10 +88,10 @@ IF EXIST "C:\SYSPDV\SYSPDV_PDV.EXE" (
 	SET SYSPDV_EXE_PATH=C:\SYSPDV\SYSPDV_SCI.EXE
 )
 
-	:: Verifica Caminho Temporario
-IF NOT EXIST "%TEMP_PATH%" (
-	MD "%TEMP_PATH%"
-	ATTRIB +H "%TEMP_PATH%"
+	:: Verifica Caminho BATorario
+IF NOT EXIST "%BAT_PATH%" (
+	MD "%BAT_PATH%"
+	ATTRIB +H "%BAT_PATH%"
 	)
 
 	:: Verifica Caminho Arquivos
@@ -155,7 +155,7 @@ SET /P CHOOSE=" Digite a opcao: "
 CLS
 
 	:: Validação de entrada Menu Inicial
-IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" IF "%CHOOSE%" NEQ "9" IF "%CHOOSE%" NEQ "0" (
+IF "%CHOOSE%" NEQ "1" IF "%CHOOSE%" NEQ "2" (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
@@ -185,33 +185,33 @@ TASKKILL /F /IM %SYSPDV_EXE% > NUL
 TIMEOUT /T 2
 CLS
 
-	:: Cria arquivos SQL na pasta TEMP para remover biometria
-IF EXIST "%TEMP_PATH%\Locdigsen_Original.txt" DEL "%TEMP_PATH%\Locdigsen_Original.txt"
+	:: Cria arquivos SQL na pasta BAT para remover biometria
+IF EXIST "%BAT_PATH%\Locdigsen_Original.txt" DEL "%BAT_PATH%\Locdigsen_Original.txt"
 (
 	ECHO SET HEADING OFF;
-	ECHO OUTPUT "%TEMP_PATH%\Locdigsen_Original.txt";
+	ECHO OUTPUT "%BAT_PATH%\Locdigsen_Original.txt";
 	ECHO SELECT COALESCE^(LOCDIGSEN, 'T'^) FROM CONFIGPDV;
 	ECHO UPDATE CONFIGPDV SET LOCDIGSEN = 'T'; 
 	ECHO EXIT;
-) > "%TEMP_PATH%\Desativar_cad.sql"
+) > "%BAT_PATH%\Desativar_cad.sql"
 
-IF EXIST "%TEMP_PATH%\Cxalocdigsen_Original.txt" DEL "%TEMP_PATH%\Cxalocdigsen_Original.txt"
+IF EXIST "%BAT_PATH%\Cxalocdigsen_Original.txt" DEL "%BAT_PATH%\Cxalocdigsen_Original.txt"
 (
 	ECHO SET HEADING OFF;
-	ECHO OUTPUT "%TEMP_PATH%\Cxalocdigsen_Original.txt";
+	ECHO OUTPUT "%BAT_PATH%\Cxalocdigsen_Original.txt";
 	ECHO SELECT COALESCE^(CXALOCDIGSEN, '0'^) FROM CAIXA;
 	ECHO UPDATE CAIXA SET CXALOCDIGSEN = '0';
 	ECHO EXIT;
-) > "%TEMP_PATH%\Desativar_mov.sql"
+) > "%BAT_PATH%\Desativar_mov.sql"
 
 	:: Executa os arquivos SQL
-ECHO INPUT '%TEMP_PATH%\Desativar_cad.sql'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_CAD_PATH%" >> "%LOG_PATH%" 2>&1
+ECHO INPUT '%BAT_PATH%\Desativar_cad.sql'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_CAD_PATH%" >> "%LOG_PATH%" 2>&1
 	(ECHO [SUCESSO]) >> "%LOG_PATH%"
 IF %ERRORLEVEL% NEQ 0 (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO               [ERRO]
+	ECHO                [ERRO]
 	ECHO.
 	ECHO      Ao Desativar Biometria _cad!
 	ECHO.
@@ -221,7 +221,7 @@ IF %ERRORLEVEL% NEQ 0 (
 	CLS
 	GOTO INI
 )
-ECHO INPUT '%TEMP_PATH%\Desativar_mov.sql'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_MOV_PATH%" >> "%LOG_PATH%" 2>&1
+ECHO INPUT '%BAT_PATH%\Desativar_mov.sql'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_MOV_PATH%" >> "%LOG_PATH%" 2>&1
 	(ECHO [SUCESSO]
 	 ECHO.
 	) >> "%LOG_PATH%"
@@ -229,7 +229,7 @@ IF %ERRORLEVEL% NEQ 0 (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO               [ERRO]
+	ECHO                [ERRO]
 	ECHO.
 	ECHO      Ao Desativar Biometria _mov!
 	ECHO.
@@ -243,7 +243,7 @@ IF %ERRORLEVEL% NEQ 0 (
 ECHO.
 ECHO   ==================================
 ECHO.
-ECHO               [SUCESSO]
+ECHO                [SUCESSO]
 ECHO.
 ECHO          Biometria Desativada!
 ECHO.
@@ -251,8 +251,8 @@ ECHO   ==================================
 ECHO.
 START "" "%SYSPDV_EXE_PATH%" > NUL
 TIMEOUT /T 3
-IF EXIST "%TEMP_PATH%\Desativar_cad.sql" DEL "%TEMP_PATH%\Desativar_cad.sql"
-IF EXIST "%TEMP_PATH%\Desativar_mov.sql" DEL "%TEMP_PATH%\Desativar_mov.sql"
+IF EXIST "%BAT_PATH%\Desativar_cad.sql" DEL "%BAT_PATH%\Desativar_cad.sql"
+IF EXIST "%BAT_PATH%\Desativar_mov.sql" DEL "%BAT_PATH%\Desativar_mov.sql"
 CLS
 GOTO INI
 
@@ -268,9 +268,9 @@ TASKKILL /F /IM %SYSPDV_EXE% > NUL
 TIMEOUT /T 2
 CLS
 
-	:: Recupera valores originais dos arquivos temporários
-IF EXIST "%TEMP_PATH%\Locdigsen_Original.txt" (
-FOR /F "usebackq tokens=*" %%A IN ("%TEMP_PATH%\Locdigsen_Original.txt") DO SET LOCDIGSEN_ORIGINAL=%%A
+	:: Recupera valores originais dos arquivos BATorários
+IF EXIST "%BAT_PATH%\Locdigsen_Original.txt" (
+FOR /F "usebackq tokens=*" %%A IN ("%BAT_PATH%\Locdigsen_Original.txt") DO SET LOCDIGSEN_ORIGINAL=%%A
 	::SET LOCDIGSEN_ORIGINAL=%LOCDIGSEN_ORIGINAL:~0,1%
 	IF "%LOCDIGSEN_ORIGINAL%"=="" (
 		SET LOCDIGSEN_ORIGINAL=B
@@ -279,8 +279,8 @@ FOR /F "usebackq tokens=*" %%A IN ("%TEMP_PATH%\Locdigsen_Original.txt") DO SET 
 		SET LOCDIGSEN_ORIGINAL=B
 	)	
 	
-IF EXIST "%TEMP_PATH%\Cxalocdigsen_Original.txt" (
-FOR /F "usebackq tokens=*" %%A IN ("%TEMP_PATH%\Cxalocdigsen_Original.txt") DO SET CXALOCDIGSEN_ORIGINAL=%%A
+IF EXIST "%BAT_PATH%\Cxalocdigsen_Original.txt" (
+FOR /F "usebackq tokens=*" %%A IN ("%BAT_PATH%\Cxalocdigsen_Original.txt") DO SET CXALOCDIGSEN_ORIGINAL=%%A
 	SET CXALOCDIGSEN_ORIGINAL=%CXALOCDIGSEN_ORIGINAL:~0,1%
 	IF "%CXALOCDIGSEN_ORIGINAL%"=="" (
 		SET CXALOCDIGSEN_ORIGINAL=1
@@ -293,21 +293,21 @@ FOR /F "usebackq tokens=*" %%A IN ("%TEMP_PATH%\Cxalocdigsen_Original.txt") DO S
 (
 	ECHO UPDATE CONFIGPDV SET LOCDIGSEN = '!LOCDIGSEN_ORIGINAL!';
 	ECHO EXIT;
-) > "%TEMP_PATH%\Restaurar_cad.sql"
+) > "%BAT_PATH%\Restaurar_cad.sql"
 
 (
 	ECHO UPDATE CAIXA SET CXALOCDIGSEN = '!CXALOCDIGSEN_ORIGINAL!';
 	ECHO EXIT;
-) > "%TEMP_PATH%\Restaurar_mov.sql"
+) > "%BAT_PATH%\Restaurar_mov.sql"
 
 	:: Executa os arquivos SQL
-ECHO INPUT '%TEMP_PATH%\Restaurar_cad.sql'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_CAD_PATH%" >> "%LOG_PATH%" 2>&1
+ECHO INPUT '%BAT_PATH%\Restaurar_cad.sql'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_CAD_PATH%" >> "%LOG_PATH%" 2>&1
 	(ECHO [SUCESSO]) >> "%LOG_PATH%"
 IF %ERRORLEVEL% NEQ 0 (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO               [ERRO]
+	ECHO                [ERRO]
 	ECHO.
 	ECHO      Ao Restaurar Biometria _cad!
 	ECHO.
@@ -317,14 +317,14 @@ IF %ERRORLEVEL% NEQ 0 (
 	CLS
 	GOTO INI
 )
-ECHO INPUT '%TEMP_PATH%\Restaurar_mov.sql'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_MOV_PATH%" >> "%LOG_PATH%" 2>&1
+ECHO INPUT '%BAT_PATH%\Restaurar_mov.sql'; | ISQL -USER %ISC_USER% -PASSWORD %ISC_PASSWORD% "%SYSPDV_MOV_PATH%" >> "%LOG_PATH%" 2>&1
 	(ECHO [SUCESSO]
 	 ECHO. ) >> "%LOG_PATH%"
 IF %ERRORLEVEL% NEQ 0 (
 	ECHO.
 	ECHO   ==================================
 	ECHO.
-	ECHO               [ERRO]
+	ECHO                [ERRO]
 	ECHO.
 	ECHO      Ao Restaurar Biometria _mov!
 	ECHO.
@@ -338,7 +338,7 @@ IF %ERRORLEVEL% NEQ 0 (
 ECHO.
 ECHO   ==================================
 ECHO.
-ECHO               [SUCESSO]
+ECHO                [SUCESSO]
 ECHO.
 ECHO          Biometria Restaurada!
 ECHO.
@@ -346,10 +346,10 @@ ECHO   ==================================
 ECHO.
 START "" "%SYSPDV_EXE_PATH%" > NUL
 TIMEOUT /T 5
-IF EXIST "%TEMP_PATH%\Restaurar_cad.sql" DEL "%TEMP_PATH%\Restaurar_cad.sql"
-IF EXIST "%TEMP_PATH%\Restaurar_mov.sql" DEL "%TEMP_PATH%\Restaurar_mov.sql"
-IF EXIST "%TEMP_PATH%\Locdigsen_Original.txt" DEL "%TEMP_PATH%\Locdigsen_Original.txt"
-IF EXIST "%TEMP_PATH%\Cxalocdigsen_Original.txt" DEL "%TEMP_PATH%\Cxalocdigsen_Original.txt"
+IF EXIST "%BAT_PATH%\Restaurar_cad.sql" DEL "%BAT_PATH%\Restaurar_cad.sql"
+IF EXIST "%BAT_PATH%\Restaurar_mov.sql" DEL "%BAT_PATH%\Restaurar_mov.sql"
+IF EXIST "%BAT_PATH%\Locdigsen_Original.txt" DEL "%BAT_PATH%\Locdigsen_Original.txt"
+IF EXIST "%BAT_PATH%\Cxalocdigsen_Original.txt" DEL "%BAT_PATH%\Cxalocdigsen_Original.txt"
 CLS
 GOTO END
 
