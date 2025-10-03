@@ -105,9 +105,9 @@ function Show-BancoMenu {
     $choice = Read-Host "Digite a opção"
 
     switch ($choice) {
-        "1" { $DB_PATH = "${SISTEM_PATH}_SRV.FDB" ; Run-Firebird $DB_PATH }
-        "2" { $DB_PATH = "${SISTEM_PATH}_CAD.FDB" ; Run-Firebird $DB_PATH }
-        "3" { $DB_PATH = "${SISTEM_PATH}_MOV.FDB" ; Run-Firebird $DB_PATH }
+        "1" { $DB_PATH = "${SISTEM_PATH}_SRV.FDB" ; Invoke-Firebird $DB_PATH }
+        "2" { $DB_PATH = "${SISTEM_PATH}_CAD.FDB" ; Invoke-Firebird $DB_PATH }
+        "3" { $DB_PATH = "${SISTEM_PATH}_MOV.FDB" ; Invoke-Firebird $DB_PATH }
         "0" { Show-SistemaMenu }
         default {
             Show-InvalidOption "1, 2, 3 ou 0"
@@ -116,8 +116,8 @@ function Show-BancoMenu {
     }
 }
 
-# Função: Executar ISQL
-function Run-Firebird {
+# Função: Executar ISQL (Firebird)
+function Invoke-Firebird {
     param([string]$DB_PATH)
 
     Clear-Host
@@ -127,7 +127,7 @@ function Run-Firebird {
     Show-MainMenu
 }
 
-# Função: SQL Server
+# Função: Executar SQL Server
 function SQLServer {
     Clear-Host
     Start-Process -NoNewWindow -Wait -FilePath "sqlcmd.exe" `
@@ -138,7 +138,6 @@ function SQLServer {
 # Função: Mensagem de erro
 function Show-InvalidOption {
     param([string]$validOptions)
-
     Clear-Host
     Write-Host "`n   =================================="
     Write-Host ""
