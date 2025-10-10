@@ -147,7 +147,7 @@ FOR /F "usebackq delims=" %%I IN ("%QUEBRA%") DO (
 	ECHO Processando ID: !ID!
 
 		:: Varre todos os arquivos XML na pasta Completo e filtra pelo ID
-	FOR %%F IN ("%ORIGEM%\*%%I*-nfe.xml") DO (
+	FOR %%F IN ("%ORIGEM%\*%%I*.xml") DO (
 		SET "FILENAME=%%~nxF"
 		SET "SUBSTRING=!FILENAME:~22,12!"
 
